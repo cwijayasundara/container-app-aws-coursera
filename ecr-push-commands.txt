@@ -1,0 +1,16 @@
+aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 746344332165.dkr.ecr.us-east-1.amazonaws.com
+docker build -t first-container .
+docker tag first-container:latest 746344332165.dkr.ecr.us-east-1.amazonaws.com/first-container:latest
+docker push 746344332165.dkr.ecr.us-east-1.amazonaws.com/first-container:latest
+
+
+docker-compose build
+docker-compose up -d
+docker-compose ps
+docker-compose down
+
+docker compose exec: Run commands inside of the containers (for example, launch a shell inside the container environment)
+docker compose logs: Inspect log output
+docker compose down: Stop and remove the running containers
+
+

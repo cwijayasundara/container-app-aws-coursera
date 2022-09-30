@@ -1,0 +1,509 @@
+From: <Saved by Blink>
+Snapshot-Content-Location: https://aws-tc-largeobjects.s3.us-west-2.amazonaws.com/DEV-AWS-MO-ContainersRedux/exercise-1-firstcontainer.html
+Subject: Exercise 1: Creating the First Container
+Date: Mon, 19 Sep 2022 08:36:08 -0000
+MIME-Version: 1.0
+Content-Type: multipart/related;
+	type="text/html";
+	boundary="----MultipartBoundary--TyVdWVYXdNsfI5NOBrgLb8lkySqZhf8K8jR5QR9l6t----"
+
+
+------MultipartBoundary--TyVdWVYXdNsfI5NOBrgLb8lkySqZhf8K8jR5QR9l6t----
+Content-Type: text/html
+Content-ID: <frame-10873AD7C2B4AF1034718606A2FFE85A@mhtml.blink>
+Content-Transfer-Encoding: quoted-printable
+Content-Location: https://aws-tc-largeobjects.s3.us-west-2.amazonaws.com/DEV-AWS-MO-ContainersRedux/exercise-1-firstcontainer.html
+
+<!DOCTYPE html><html xmlns=3D"http://www.w3.org/1999/xhtml" lang=3D"" xml:l=
+ang=3D"" data-lt-installed=3D"true"><head><meta http-equiv=3D"Content-Type"=
+ content=3D"text/html; charset=3DUTF-8"><link rel=3D"stylesheet" type=3D"te=
+xt/css" href=3D"cid:css-0440600f-f104-496f-b097-214e44bd85d9@mhtml.blink" /=
+>
+ =20
+  <meta name=3D"generator" content=3D"pandoc">
+  <meta name=3D"viewport" content=3D"width=3Ddevice-width, initial-scale=3D=
+1.0, user-scalable=3Dyes">
+  <title>Exercise 1: Creating the First Container</title>
+ =20
+ =20
+
+
+</head><body>
+<p><em>[version_1.0]</em></p>
+<div style=3D"background-color: #FFD2D2; padding: 15px; margin-bottom: 25px=
+">
+<h3>
+<span class=3D"fa fa-info-circle"></span> Note
+</h3>
+<p>The exercises in this course will have an associated charge in your AWS =
+account. In this exercise, you create the following resources:</p>
+<ul>
+<li>AWS Identity and Access Management (IAM) policy and user (Policies and =
+users are AWS account features, offered at no additional charge)</li>
+<li>AWS Cloud9 integrated development environment (IDE) instance</li>
+<li>AWS CloudFormation stack</li>
+<li>Amazon DynamoDB table</li>
+</ul>
+<p>Familiarize yourself with <strong><a href=3D"https://aws.amazon.com/clou=
+d9/pricing/" target=3D"_blank">AWS Cloud9 pricing</a></strong>, <strong><a =
+href=3D"https://aws.amazon.com/cloudformation/pricing/" target=3D"_blank">A=
+WS CloudFormation pricing</a></strong>, <strong><a href=3D"https://aws.amaz=
+on.com/dynamodb/pricing/" target=3D"_blank">Amazon DynamoDB pricing</a></st=
+rong>,and the <strong><a href=3D"https://aws.amazon.com/free/" target=3D"_b=
+lank">AWS Free Tier</a></strong>.</p>
+</div>
+<h2 id=3D"setting-up">Setting up</h2>
+<p>This exercise requires an IAM role that will be used with the AWS Cloud9=
+ instance. It also requires a DynamoDB table that will be set up and then u=
+sed in a later exercise. The CloudFormation stack will create these resourc=
+es for you. <em>You will also need to choose a Region where AWS App Runner =
+is <strong><a href=3D"https://docs.aws.amazon.com/general/latest/gr/apprunn=
+er.html" target=3D"_blank">available</a></strong>.</em></p>
+<ol type=3D"1">
+<li><p>Download the following CloudFormation template: <a href=3D"https://a=
+ws-tc-largeobjects.s3.us-west-2.amazonaws.com/DEV-AWS-MO-ContainersRedux/do=
+wnloads/exercise-containers.yml">exercise-containers.yml</a>. This template=
+ will set up the backend resources that are needed to complete the exercise=
+.</p>
+<p><strong>Note</strong>: If you have an existing Virtual Private Cloud (VP=
+C) and it has a Classless Inter-Domain Routing (CIDR) block of <em>10.16.0.=
+0/16</em>, you must edit the template to change it.</p></li>
+<li><p>Sign in to the AWS Management Console as a user that has administrat=
+or permissions.</p></li>
+<li><p>Choose <strong>Services</strong>, and search for and open <strong>Cl=
+oudFormation</strong>.</p></li>
+<li><p>Choose <strong>Create stack</strong>.</p></li>
+<li><p>For <strong>Specify template</strong>, choose <strong>Upload a templ=
+ate file</strong>.</p></li>
+<li><p>Select <strong>Choose file</strong> and browse to where you download=
+ed the <code>exercise-containers</code> template.</p></li>
+<li><p>Select the <code>exercise-containers</code> template and choose <str=
+ong>Open</strong>.</p></li>
+<li><p>Choose <strong>Next</strong>.</p></li>
+<li><p>For <strong>Stack name</strong>, enter <code>exercise-containers</co=
+de>.</p></li>
+<li><p>Choose <strong>Next</strong>, and then choose <strong>Next</strong> =
+again.</p></li>
+<li><p>Select the acknowledgement and choose <strong>Create stack</strong>.=
+ <em>Wait for the stack to complete.</em></p></li>
+</ol>
+<h1 id=3D"exercise-1-creating-the-first-container">Exercise 1: Creating the=
+ First Container</h1>
+<p>In this exercise, you create an AWS Cloud9 instance and modify some of t=
+he environment settings. You also install the prerequisites and source code=
+ that are needed to launch new container instances inside your AWS Cloud9 e=
+nvironment.</p>
+<h2 id=3D"task-1-creating-an-aws-cloud9-instance">Task 1: Creating an AWS C=
+loud9 instance</h2>
+<p>In this task, you will create an AWS Cloud9 instance.</p>
+<ol type=3D"1">
+<li><p>In the AWS Management Console, choose <strong>Services</strong>, and=
+ then search for and open <strong>Cloud9</strong>.</p></li>
+<li><p>Choose <strong>Create environment</strong>.</p></li>
+<li><p>For <strong>Name</strong>, enter <code>containers-cloud9</code> and =
+choose <strong>Next step</strong>.</p></li>
+<li>Configure the following settings.
+<ul>
+<li><strong>Instance type</strong>: <em>t3.small (2 GiB RAM + 2 vCPU)</em><=
+/li>
+<li><strong>Network settings (advanced)</strong>: <em>Containers VPC</em></=
+li>
+</ul></li>
+<li><p>Choose <strong>Next step</strong>.</p></li>
+<li><p>Choose <strong>Create environment</strong>.</p></li>
+</ol>
+<h2 id=3D"task-2-modifying-and-deploying-source-code-to-aws-cloud9">Task 2:=
+ Modifying and deploying source code to AWS Cloud9</h2>
+<p>In this task, you will upgrade the AWS Command Line Interface (AWS CLI) =
+<strong><a href=3D"https://docs.aws.amazon.com/cli/latest/userguide/getting=
+-started-install.html" target=3D"_blank">version</a></strong>, and deploy t=
+he source code that=E2=80=99s needed to complete the exercise. You will als=
+o associate the instance profile with your AWS Cloud9 instance. Finally, yo=
+u will expand your environment to give it more disk space.</p>
+<ol type=3D"1">
+<li><p>In the AWS Cloud9 terminal, upgrade the AWS CLI version by running t=
+he following command.</p>
+<div class=3D"sourceCode" id=3D"cb1"><pre class=3D"sourceCode bash" id=3D"c=
+odeblock0"><code class=3D"sourceCode bash"><a class=3D"sourceLine" id=3D"cb=
+1-1" title=3D"1"><span class=3D"ex">curl</span> <span class=3D"st">"https:/=
+/awscli.amazonaws.com/awscli-exe-linux-x86_64.zip"</span> -o <span class=3D=
+"st">"awscliv2.zip"</span></a>
+<a class=3D"sourceLine" id=3D"cb1-2" title=3D"2"></a>
+<a class=3D"sourceLine" id=3D"cb1-3" title=3D"3"><span class=3D"fu">unzip</=
+span> awscliv2.zip</a>
+<a class=3D"sourceLine" id=3D"cb1-4" title=3D"4"></a>
+<a class=3D"sourceLine" id=3D"cb1-5" title=3D"5"><span class=3D"fu">sudo</s=
+pan> ./aws/install</a>
+<a class=3D"sourceLine" id=3D"cb1-6" title=3D"6"></a>
+<a class=3D"sourceLine" id=3D"cb1-7" title=3D"7"><span class=3D"bu">.</span=
+> <span class=3D"ex">~/.bashrc</span> </a></code></pre><button class=3D"btn=
+ copybtn" data-clipboard-target=3D"#codeblock0"><img class=3D"clipboard" sr=
+c=3D"https://aws-tc-largeobjects.s3.us-west-2.amazonaws.com/DEV-AWS-MO-Cont=
+ainersRedux/images/clipboard.svg" width=3D"13" alt=3D"Copy to clipboard"></=
+button></div></li>
+<li><p>Verify the version.</p>
+<div class=3D"sourceCode" id=3D"cb2"><pre class=3D"sourceCode bash" id=3D"c=
+odeblock1"><code class=3D"sourceCode bash"><a class=3D"sourceLine" id=3D"cb=
+2-1" title=3D"1"><span class=3D"ex">aws</span> --version</a></code></pre><b=
+utton class=3D"btn copybtn" data-clipboard-target=3D"#codeblock1"><img clas=
+s=3D"clipboard" src=3D"https://aws-tc-largeobjects.s3.us-west-2.amazonaws.c=
+om/DEV-AWS-MO-ContainersRedux/images/clipboard.svg" width=3D"13" alt=3D"Cop=
+y to clipboard"></button></div></li>
+<li><p>Download and extract the source code that you need for this exercise=
+.</p>
+<div class=3D"sourceCode" id=3D"cb3"><pre class=3D"sourceCode bash" id=3D"c=
+odeblock2"><code class=3D"sourceCode bash"><a class=3D"sourceLine" id=3D"cb=
+3-1" title=3D"1"><span class=3D"fu">wget</span> https://aws-tc-largeobjects=
+.s3.us-west-2.amazonaws.com/DEV-AWS-MO-ContainersRedux/downloads/containers=
+-src.zip</a></code></pre><button class=3D"btn copybtn" data-clipboard-targe=
+t=3D"#codeblock2"><img class=3D"clipboard" src=3D"https://aws-tc-largeobjec=
+ts.s3.us-west-2.amazonaws.com/DEV-AWS-MO-ContainersRedux/images/clipboard.s=
+vg" width=3D"13" alt=3D"Copy to clipboard"></button></div>
+<div class=3D"sourceCode" id=3D"cb4"><pre class=3D"sourceCode bash" id=3D"c=
+odeblock3"><code class=3D"sourceCode bash"><a class=3D"sourceLine" id=3D"cb=
+4-1" title=3D"1"><span class=3D"fu">unzip</span> containers-src.zip</a></co=
+de></pre><button class=3D"btn copybtn" data-clipboard-target=3D"#codeblock3=
+"><img class=3D"clipboard" src=3D"https://aws-tc-largeobjects.s3.us-west-2.=
+amazonaws.com/DEV-AWS-MO-ContainersRedux/images/clipboard.svg" width=3D"13"=
+ alt=3D"Copy to clipboard"></button></div></li>
+<li><p>Copy the instance ID and associate the instance profile with the AWS=
+ Cloud9 instance.</p>
+<div class=3D"sourceCode" id=3D"cb5"><pre class=3D"sourceCode bash" id=3D"c=
+odeblock4"><code class=3D"sourceCode bash"><a class=3D"sourceLine" id=3D"cb=
+5-1" title=3D"1"><span class=3D"bu">export</span> <span class=3D"va">INSTAN=
+CE_ID=3D</span><span class=3D"st">"</span><span class=3D"kw">`</span><span =
+class=3D"fu">wget</span> -q -O - http://169.254.169.254/latest/meta-data/in=
+stance-id<span class=3D"kw">`</span><span class=3D"st">"</span></a>
+<a class=3D"sourceLine" id=3D"cb5-2" title=3D"2"></a>
+<a class=3D"sourceLine" id=3D"cb5-3" title=3D"3"><span class=3D"ex">aws</sp=
+an> ec2 associate-iam-instance-profile --iam-instance-profile Name=3Dcloud9=
+-containers-role --instance-id <span class=3D"va">$INSTANCE_ID</span></a></=
+code></pre><button class=3D"btn copybtn" data-clipboard-target=3D"#codebloc=
+k4"><img class=3D"clipboard" src=3D"https://aws-tc-largeobjects.s3.us-west-=
+2.amazonaws.com/DEV-AWS-MO-ContainersRedux/images/clipboard.svg" width=3D"1=
+3" alt=3D"Copy to clipboard"></button></div></li>
+<li><p>Make sure that the <strong>State</strong> is listed as <em>associate=
+d</em>.</p>
+<div class=3D"sourceCode" id=3D"cb6"><pre class=3D"sourceCode bash" id=3D"c=
+odeblock5"><code class=3D"sourceCode bash"><a class=3D"sourceLine" id=3D"cb=
+6-1" title=3D"1"><span class=3D"ex">aws</span> ec2 describe-iam-instance-pr=
+ofile-associations</a></code></pre><button class=3D"btn copybtn" data-clipb=
+oard-target=3D"#codeblock5"><img class=3D"clipboard" src=3D"https://aws-tc-=
+largeobjects.s3.us-west-2.amazonaws.com/DEV-AWS-MO-ContainersRedux/images/c=
+lipboard.svg" width=3D"13" alt=3D"Copy to clipboard"></button></div></li>
+<li><p>Run the following command.</p>
+<p>This command tells AWS Cloud9 to specifically disable the managed rotate=
+d credentials, and instead use the <code>cloud9-containers-role</code> that=
+ CloudFormation created from the template.</p>
+<div class=3D"sourceCode" id=3D"cb7"><pre class=3D"sourceCode bash" id=3D"c=
+odeblock6"><code class=3D"sourceCode bash"><a class=3D"sourceLine" id=3D"cb=
+7-1" title=3D"1"><span class=3D"ex">aws</span> cloud9 update-environment  -=
+-environment-id <span class=3D"va">$C9_PID</span> --managed-credentials-act=
+ion DISABLE</a></code></pre><button class=3D"btn copybtn" data-clipboard-ta=
+rget=3D"#codeblock6"><img class=3D"clipboard" src=3D"https://aws-tc-largeob=
+jects.s3.us-west-2.amazonaws.com/DEV-AWS-MO-ContainersRedux/images/clipboar=
+d.svg" width=3D"13" alt=3D"Copy to clipboard"></button></div></li>
+<li><p>Wait for a couple of minutes, and then run the following command:</p=
+>
+<div class=3D"sourceCode" id=3D"cb8"><pre class=3D"sourceCode bash" id=3D"c=
+odeblock7"><code class=3D"sourceCode bash"><a class=3D"sourceLine" id=3D"cb=
+8-1" title=3D"1"><span class=3D"ex">aws</span> sts get-caller-identity</a><=
+/code></pre><button class=3D"btn copybtn" data-clipboard-target=3D"#codeblo=
+ck7"><img class=3D"clipboard" src=3D"https://aws-tc-largeobjects.s3.us-west=
+-2.amazonaws.com/DEV-AWS-MO-ContainersRedux/images/clipboard.svg" width=3D"=
+13" alt=3D"Copy to clipboard"></button></div>
+<p>You should see an Amazon Resource Name (ARN) that matches a role in the =
+CloudFormation template:</p>
+<div class=3D"sourceCode" id=3D"cb9"><pre class=3D"sourceCode bash" id=3D"c=
+odeblock8"><code class=3D"sourceCode bash"><a class=3D"sourceLine" id=3D"cb=
+9-1" title=3D"1"><span class=3D"ex">arn</span>:aws:sts::0123456789012:assum=
+ed-role/cloud9-containers-role/i-xxxxxxxxxxxxxxxxxx</a></code></pre><button=
+ class=3D"btn copybtn" data-clipboard-target=3D"#codeblock8"><img class=3D"=
+clipboard" src=3D"https://aws-tc-largeobjects.s3.us-west-2.amazonaws.com/DE=
+V-AWS-MO-ContainersRedux/images/clipboard.svg" width=3D"13" alt=3D"Copy to =
+clipboard"></button></div></li>
+<li><p>Expand the AWS Cloud9 disk by running the following utility:</p>
+<div class=3D"sourceCode" id=3D"cb10"><pre class=3D"sourceCode bash" id=3D"=
+codeblock9"><code class=3D"sourceCode bash"><a class=3D"sourceLine" id=3D"c=
+b10-1" title=3D"1"><span class=3D"fu">bash</span> utilities/c9-resize.sh 40=
+</a></code></pre><button class=3D"btn copybtn" data-clipboard-target=3D"#co=
+deblock9"><img class=3D"clipboard" src=3D"https://aws-tc-largeobjects.s3.us=
+-west-2.amazonaws.com/DEV-AWS-MO-ContainersRedux/images/clipboard.svg" widt=
+h=3D"13" alt=3D"Copy to clipboard"></button></div></li>
+</ol>
+<h2 id=3D"task-3-building-the-first-container">Task 3: Building the first c=
+ontainer</h2>
+<p>In this task, you will pull the required images and build your first Doc=
+ker container.</p>
+<ol type=3D"1">
+<li><p>Change directory to <code>first-container/</code>.</p>
+<div class=3D"sourceCode" id=3D"cb11"><pre class=3D"sourceCode bash" id=3D"=
+codeblock10"><code class=3D"sourceCode bash"><a class=3D"sourceLine" id=3D"=
+cb11-1" title=3D"1"><span class=3D"bu">cd</span> first-container/</a></code=
+></pre><button class=3D"btn copybtn" data-clipboard-target=3D"#codeblock10"=
+><img class=3D"clipboard" src=3D"https://aws-tc-largeobjects.s3.us-west-2.a=
+mazonaws.com/DEV-AWS-MO-ContainersRedux/images/clipboard.svg" width=3D"13" =
+alt=3D"Copy to clipboard"></button></div></li>
+<li><p>Inspect the Dockerfile, and build a container image.</p>
+<div class=3D"sourceCode" id=3D"cb12"><pre class=3D"sourceCode bash" id=3D"=
+codeblock11"><code class=3D"sourceCode bash"><a class=3D"sourceLine" id=3D"=
+cb12-1" title=3D"1"><span class=3D"ex">docker</span> build -t first-contain=
+er .</a></code></pre><button class=3D"btn copybtn" data-clipboard-target=3D=
+"#codeblock11"><img class=3D"clipboard" src=3D"https://aws-tc-largeobjects.=
+s3.us-west-2.amazonaws.com/DEV-AWS-MO-ContainersRedux/images/clipboard.svg"=
+ width=3D"13" alt=3D"Copy to clipboard"></button></div></li>
+<li><p>View the Docker images.</p>
+<div class=3D"sourceCode" id=3D"cb13"><pre class=3D"sourceCode bash" id=3D"=
+codeblock12"><code class=3D"sourceCode bash"><a class=3D"sourceLine" id=3D"=
+cb13-1" title=3D"1"><span class=3D"ex">docker</span> image ls</a></code></p=
+re><button class=3D"btn copybtn" data-clipboard-target=3D"#codeblock12"><im=
+g class=3D"clipboard" src=3D"https://aws-tc-largeobjects.s3.us-west-2.amazo=
+naws.com/DEV-AWS-MO-ContainersRedux/images/clipboard.svg" width=3D"13" alt=
+=3D"Copy to clipboard"></button></div>
+<p>The application being served sits on port 8080 in the container image.</=
+p></li>
+<li><p>Publish port 8080 to your AWS Cloud9 host and make it available on p=
+ort 8080.</p>
+<div class=3D"sourceCode" id=3D"cb14"><pre class=3D"sourceCode bash" id=3D"=
+codeblock13"><code class=3D"sourceCode bash"><a class=3D"sourceLine" id=3D"=
+cb14-1" title=3D"1"><span class=3D"ex">docker</span> run -d -p 8080:8080 --=
+name webapp first-container</a></code></pre><button class=3D"btn copybtn" d=
+ata-clipboard-target=3D"#codeblock13"><img class=3D"clipboard" src=3D"https=
+://aws-tc-largeobjects.s3.us-west-2.amazonaws.com/DEV-AWS-MO-ContainersRedu=
+x/images/clipboard.svg" width=3D"13" alt=3D"Copy to clipboard"></button></d=
+iv></li>
+<li><p>View the running Docker containers.</p>
+<div class=3D"sourceCode" id=3D"cb15"><pre class=3D"sourceCode bash" id=3D"=
+codeblock14"><code class=3D"sourceCode bash"><a class=3D"sourceLine" id=3D"=
+cb15-1" title=3D"1"><span class=3D"ex">docker</span> ps</a></code></pre><bu=
+tton class=3D"btn copybtn" data-clipboard-target=3D"#codeblock14"><img clas=
+s=3D"clipboard" src=3D"https://aws-tc-largeobjects.s3.us-west-2.amazonaws.c=
+om/DEV-AWS-MO-ContainersRedux/images/clipboard.svg" width=3D"13" alt=3D"Cop=
+y to clipboard"></button></div></li>
+<li><p>View the logs that are being captured from the container.</p>
+<div class=3D"sourceCode" id=3D"cb16"><pre class=3D"sourceCode bash" id=3D"=
+codeblock15"><code class=3D"sourceCode bash"><a class=3D"sourceLine" id=3D"=
+cb16-1" title=3D"1"><span class=3D"ex">docker</span> logs webapp</a></code>=
+</pre><button class=3D"btn copybtn" data-clipboard-target=3D"#codeblock15">=
+<img class=3D"clipboard" src=3D"https://aws-tc-largeobjects.s3.us-west-2.am=
+azonaws.com/DEV-AWS-MO-ContainersRedux/images/clipboard.svg" width=3D"13" a=
+lt=3D"Copy to clipboard"></button></div>
+<p>You will now view the application in a browser.</p></li>
+<li><p>At the top of your AWS Cloud9 instance, choose <strong>Preview</stro=
+ng> and then choose <strong>Preview Running Application</strong>.</p>
+<p>You should see the running application.</p></li>
+<li><p>Launch a shell inside the container.</p>
+<p>You can use this shell to run commands within the container itself.</p>
+<div class=3D"sourceCode" id=3D"cb17"><pre class=3D"sourceCode bash" id=3D"=
+codeblock16"><code class=3D"sourceCode bash"><a class=3D"sourceLine" id=3D"=
+cb17-1" title=3D"1"><span class=3D"ex">docker</span> exec -it webapp /bin/s=
+h</a></code></pre><button class=3D"btn copybtn" data-clipboard-target=3D"#c=
+odeblock16"><img class=3D"clipboard" src=3D"https://aws-tc-largeobjects.s3.=
+us-west-2.amazonaws.com/DEV-AWS-MO-ContainersRedux/images/clipboard.svg" wi=
+dth=3D"13" alt=3D"Copy to clipboard"></button></div></li>
+<li><p>In the container, look at the contents of the <strong>/app</strong> =
+folder and view the contents of <strong>/app/input.txt</strong>.</p>
+<div class=3D"sourceCode" id=3D"cb18"><pre class=3D"sourceCode bash" id=3D"=
+codeblock17"><code class=3D"sourceCode bash"><a class=3D"sourceLine" id=3D"=
+cb18-1" title=3D"1"><span class=3D"fu">ls</span> /app</a>
+<a class=3D"sourceLine" id=3D"cb18-2" title=3D"2"></a>
+<a class=3D"sourceLine" id=3D"cb18-3" title=3D"3"><span class=3D"fu">cat</s=
+pan> /app/input.txt</a></code></pre><button class=3D"btn copybtn" data-clip=
+board-target=3D"#codeblock17"><img class=3D"clipboard" src=3D"https://aws-t=
+c-largeobjects.s3.us-west-2.amazonaws.com/DEV-AWS-MO-ContainersRedux/images=
+/clipboard.svg" width=3D"13" alt=3D"Copy to clipboard"></button></div></li>
+<li><p>In the container, view the process list.</p>
+<div class=3D"sourceCode" id=3D"cb19"><pre class=3D"sourceCode bash" id=3D"=
+codeblock18"><code class=3D"sourceCode bash"><a class=3D"sourceLine" id=3D"=
+cb19-1" title=3D"1"><span class=3D"fu">ps</span> -a</a></code></pre><button=
+ class=3D"btn copybtn" data-clipboard-target=3D"#codeblock18"><img class=3D=
+"clipboard" src=3D"https://aws-tc-largeobjects.s3.us-west-2.amazonaws.com/D=
+EV-AWS-MO-ContainersRedux/images/clipboard.svg" width=3D"13" alt=3D"Copy to=
+ clipboard"></button></div></li>
+<li><p>Escape out of the container (you can escape out of the container by =
+pressing Ctrl+D).</p></li>
+<li><p>Stop and remove the running container.</p>
+<div class=3D"sourceCode" id=3D"cb20"><pre class=3D"sourceCode bash" id=3D"=
+codeblock19"><code class=3D"sourceCode bash"><a class=3D"sourceLine" id=3D"=
+cb20-1" title=3D"1"><span class=3D"ex">docker</span> stop webapp</a>
+<a class=3D"sourceLine" id=3D"cb20-2" title=3D"2"></a>
+<a class=3D"sourceLine" id=3D"cb20-3" title=3D"3"><span class=3D"ex">docker=
+</span> rm webapp</a></code></pre><button class=3D"btn copybtn" data-clipbo=
+ard-target=3D"#codeblock19"><img class=3D"clipboard" src=3D"https://aws-tc-=
+largeobjects.s3.us-west-2.amazonaws.com/DEV-AWS-MO-ContainersRedux/images/c=
+lipboard.svg" width=3D"13" alt=3D"Copy to clipboard"></button></div></li>
+</ol>
+<h2 id=3D"task-4-modifying-the-container-with-new-data">Task 4: Modifying t=
+he container with new data</h2>
+<p>In this task, you will change the <code>input.txt</code> file inside the=
+ container with new data. You can use a bind mount to mount a local file re=
+source in place of <code>/app/input.txt</code> inside the container.</p>
+<ol type=3D"1">
+<li><p>Create an <code>~/input.txt</code> file with five words, with each w=
+ord on a new line.</p>
+<div class=3D"sourceCode" id=3D"cb21"><pre class=3D"sourceCode bash" id=3D"=
+codeblock20"><code class=3D"sourceCode bash"><a class=3D"sourceLine" id=3D"=
+cb21-1" title=3D"1"><span class=3D"bu">printf</span> <span class=3D"st">"ci=
+nco\ncuatro\ntres\ndos\nuno"</span> <span class=3D"op">&gt;</span> ~/input.=
+txt</a></code></pre><button class=3D"btn copybtn" data-clipboard-target=3D"=
+#codeblock20"><img class=3D"clipboard" src=3D"https://aws-tc-largeobjects.s=
+3.us-west-2.amazonaws.com/DEV-AWS-MO-ContainersRedux/images/clipboard.svg" =
+width=3D"13" alt=3D"Copy to clipboard"></button></div></li>
+<li><p>Launch a container with the new file mounted in place of <code>/app/=
+input.txt</code>.</p>
+<div class=3D"sourceCode" id=3D"cb22"><pre class=3D"sourceCode bash" id=3D"=
+codeblock21"><code class=3D"sourceCode bash"><a class=3D"sourceLine" id=3D"=
+cb22-1" title=3D"1"><span class=3D"ex">docker</span> run -d -p 8080:8080 \<=
+/a>
+<a class=3D"sourceLine" id=3D"cb22-2" title=3D"2">-e MESSAGE_COLOR=3D#0000f=
+f \</a>
+<a class=3D"sourceLine" id=3D"cb22-3" title=3D"3">-v ~/input.txt:/app/input=
+.txt \</a>
+<a class=3D"sourceLine" id=3D"cb22-4" title=3D"4">--name webapp \</a>
+<a class=3D"sourceLine" id=3D"cb22-5" title=3D"5">first-container</a></code=
+></pre><button class=3D"btn copybtn" data-clipboard-target=3D"#codeblock21"=
+><img class=3D"clipboard" src=3D"https://aws-tc-largeobjects.s3.us-west-2.a=
+mazonaws.com/DEV-AWS-MO-ContainersRedux/images/clipboard.svg" width=3D"13" =
+alt=3D"Copy to clipboard"></button></div>
+<p>You can configure an application that=E2=80=99s running in a container w=
+ith environment variables. The containerized application takes <code>MESSAG=
+E_COLOR</code> as an environment variable.</p></li>
+<li><p>Visit the updated application in a browser by choosing <strong>Previ=
+ew</strong>, <strong>Preview Running Application</strong>.</p></li>
+<li><p>Force-remove the container.</p>
+<div class=3D"sourceCode" id=3D"cb23"><pre class=3D"sourceCode bash" id=3D"=
+codeblock22"><code class=3D"sourceCode bash"><a class=3D"sourceLine" id=3D"=
+cb23-1" title=3D"1"><span class=3D"ex">docker</span> rm -f webapp</a></code=
+></pre><button class=3D"btn copybtn" data-clipboard-target=3D"#codeblock22"=
+><img class=3D"clipboard" src=3D"https://aws-tc-largeobjects.s3.us-west-2.a=
+mazonaws.com/DEV-AWS-MO-ContainersRedux/images/clipboard.svg" width=3D"13" =
+alt=3D"Copy to clipboard"></button></div></li>
+</ol>
+
+
+<footer>
+    <p>=C2=A9 2022 Amazon Web Services, Inc. or its affiliates. All rights =
+reserved. This work may not be reproduced or redistributed, in whole or in =
+part, without prior written permission from Amazon Web Services, Inc. Comme=
+rcial copying, lending, or selling is prohibited. Corrections, feedback, or=
+ other questions? Contact us at <a href=3D"https://support.aws.amazon.com/#=
+/contacts/aws-training" target=3D"_blank">https://support.aws.amazon.com/#/=
+contacts/aws-training</a>. All trademarks are the property of their owners.=
+</p>
+</footer>
+
+</body></html>
+------MultipartBoundary--TyVdWVYXdNsfI5NOBrgLb8lkySqZhf8K8jR5QR9l6t----
+Content-Type: text/css
+Content-Transfer-Encoding: quoted-printable
+Content-Location: cid:css-0440600f-f104-496f-b097-214e44bd85d9@mhtml.blink
+
+@charset "utf-8";
+
+html, body, footer { font-family: "Open Sans", "Helvetica Neue", Helvetica,=
+ Arial, sans-serif; margin: 1em; }
+
+img:not(.clipboard) { max-width: 100%; height: auto; width: auto; }
+
+button.copybtn { transition: opacity 0.3s ease-in-out 0s; opacity: 0; paddi=
+ng: 2px 6px; position: absolute; right: 4px; top: 4px; }
+
+div.sourceCode:hover .copybtn, div.sourceCode .copybtn:focus { opacity: 0.3=
+; }
+
+div.sourceCode .copybtn:hover { opacity: 1; }
+
+div.sourceCode { position: relative; }
+
+.xmodule_display.xmodule_HtmlBlock ol { padding: 0px 0px 0px 2em !important=
+; }
+
+.xmodule_display.xmodule_HtmlBlock ul { padding: 0px 0px 0px 2em !important=
+; }
+
+code { border-radius: 4px; padding: 2px 4px !important; background-color: r=
+gb(238, 238, 238) !important; }
+
+pre code { display: block; overflow-x: auto; margin: 0px 0px 10px; font-siz=
+e: 13px; line-height: 1.42857; word-break: break-all; overflow-wrap: break-=
+word; border: 1px solid rgb(204, 204, 204); border-radius: 4px; white-space=
+: pre; padding: 9.5px !important; background-color: rgb(245, 245, 245) !imp=
+ortant; }
+
+pre code span.al { color: rgb(255, 0, 0); font-weight: bold; }
+
+pre code span.an { color: rgb(96, 160, 176); font-weight: bold; font-style:=
+ italic; }
+
+pre code span.at { color: rgb(125, 144, 41); }
+
+pre code span.bn { color: rgb(64, 160, 112); }
+
+pre code span.bu { color: rgb(6, 40, 126); }
+
+pre code span.cf { color: rgb(0, 112, 32); font-weight: bold; }
+
+pre code span.ch { color: rgb(64, 112, 160); }
+
+pre code span.cn { color: rgb(136, 0, 0); }
+
+pre code span.co { color: rgb(96, 160, 176); font-style: italic; }
+
+pre code span.cv { color: rgb(96, 160, 176); font-weight: bold; font-style:=
+ italic; }
+
+pre code span.do { color: rgb(186, 33, 33); font-style: italic; }
+
+pre code span.dt { color: rgb(144, 32, 0); }
+
+pre code span.dv { color: rgb(64, 160, 112); }
+
+pre code span.er { color: rgb(255, 0, 0); font-weight: bold; }
+
+pre code span.ex { color: rgb(6, 40, 126); }
+
+pre code span.fl { color: rgb(64, 160, 112); }
+
+pre code span.fu { color: rgb(6, 40, 126); }
+
+pre code span.im { }
+
+pre code span.in { color: rgb(96, 160, 176); font-weight: bold; font-style:=
+ italic; }
+
+pre code span.kw { color: rgb(0, 112, 32); font-weight: bold; }
+
+pre code span.op { color: rgb(102, 102, 102); }
+
+pre code span.ot { color: rgb(0, 112, 32); }
+
+pre code span.pp { color: rgb(188, 122, 0); }
+
+pre code span.sc { color: rgb(64, 112, 160); }
+
+pre code span.ss { color: rgb(187, 102, 136); }
+
+pre code span.st { color: rgb(64, 112, 160); }
+
+pre code span.va { color: rgb(25, 23, 124); }
+
+pre code span.vs { color: rgb(64, 112, 160); }
+
+pre code span.wa { color: rgb(96, 160, 176); font-weight: bold; font-style:=
+ italic; }
+
+footer { padding-top: 3em; font-style: italic; font-size: 0.9em; }
+------MultipartBoundary--TyVdWVYXdNsfI5NOBrgLb8lkySqZhf8K8jR5QR9l6t----
+Content-Type: image/svg+xml
+Content-Transfer-Encoding: quoted-printable
+Content-Location: https://aws-tc-largeobjects.s3.us-west-2.amazonaws.com/DEV-AWS-MO-ContainersRedux/images/clipboard.svg
+
+<svg height=3D"1024" width=3D"896" xmlns=3D"http://www.w3.org/2000/svg">
+  <path d=3D"M128 768h256v64H128v-64z m320-384H128v64h320v-64z m128 192V448=
+L384 640l192 192V704h320V576H576z m-288-64H128v64h160v-64zM128 704h160v-64H=
+128v64z m576 64h64v128c-1 18-7 33-19 45s-27 18-45 19H64c-35 0-64-29-64-64V1=
+92c0-35 29-64 64-64h192C256 57 313 0 384 0s128 57 128 128h192c35 0 64 29 64=
+ 64v320h-64V320H64v576h640V768zM128 256h512c0-35-29-64-64-64h-64c-35 0-64-2=
+9-64-64s-29-64-64-64-64 29-64 64-29 64-64 64h-64c-35 0-64 29-64 64z" />
+</svg>=0A
+------MultipartBoundary--TyVdWVYXdNsfI5NOBrgLb8lkySqZhf8K8jR5QR9l6t------

@@ -1,0 +1,615 @@
+From: <Saved by Blink>
+Snapshot-Content-Location: https://aws-tc-largeobjects.s3.us-west-2.amazonaws.com/DEV-AWS-MO-ContainersRedux/exercise-5-eks.html
+Subject: Exercise 5: Using Amazon EKS
+Date: Mon, 19 Sep 2022 04:40:24 -0000
+MIME-Version: 1.0
+Content-Type: multipart/related;
+	type="text/html";
+	boundary="----MultipartBoundary--Zfl2IkBTkxKj2URRygcdYFGwBgmSMDqgsb7AJWw6mf----"
+
+
+------MultipartBoundary--Zfl2IkBTkxKj2URRygcdYFGwBgmSMDqgsb7AJWw6mf----
+Content-Type: text/html
+Content-ID: <frame-BF5A1933D99D8C4F96180BAF74BB9B3D@mhtml.blink>
+Content-Transfer-Encoding: quoted-printable
+Content-Location: https://aws-tc-largeobjects.s3.us-west-2.amazonaws.com/DEV-AWS-MO-ContainersRedux/exercise-5-eks.html
+
+<!DOCTYPE html><html xmlns=3D"http://www.w3.org/1999/xhtml" lang=3D"" xml:l=
+ang=3D"" data-lt-installed=3D"true"><head><meta http-equiv=3D"Content-Type"=
+ content=3D"text/html; charset=3DUTF-8"><link rel=3D"stylesheet" type=3D"te=
+xt/css" href=3D"cid:css-217f52a1-daf8-4869-8a28-3bc605b39d47@mhtml.blink" /=
+>
+ =20
+  <meta name=3D"generator" content=3D"pandoc">
+  <meta name=3D"viewport" content=3D"width=3Ddevice-width, initial-scale=3D=
+1.0, user-scalable=3Dyes">
+  <title>Exercise 5: Using Amazon EKS</title>
+ =20
+ =20
+
+
+</head><body>
+<p><em>[version_1.0]</em></p>
+<div style=3D"background-color: #FFD2D2; padding: 15px; margin-bottom: 25px=
+">
+<h3>
+<span class=3D"fa fa-info-circle"></span> Note
+</h3>
+<p>The exercises in this course will have an associated charge in your AWS =
+account. In this exercise, you create or use the following resources:</p>
+<ul>
+<li>AWS Identity and Access Management (IAM) policy and user (Policies and =
+users are AWS account features, offered at no additional charge)</li>
+<li>AWS Cloud9 integrated development environment (IDE) instance</li>
+<li>Amazon Elastic Kubernetes Service (Amazon EKS) cluster</li>
+<li>Amazon Elastic Container Registry (Amazon ECR) repositories</li>
+</ul>
+<p>Familiarize yourself with <strong><a href=3D"https://aws.amazon.com/clou=
+d9/pricing/" target=3D"_blank">AWS Cloud9 pricing</a></strong>, <strong><a =
+href=3D"https://aws.amazon.com/eks/pricing/" target=3D"_blank">Amazon EKS p=
+ricing</a></strong>, <strong><a href=3D"https://aws.amazon.com/ecr/pricing/=
+" target=3D"_blank">Amazon Elastic Container Registry pricing</a></strong>,=
+ and the <strong><a href=3D"https://aws.amazon.com/free/" target=3D"_blank"=
+>AWS Free Tier</a></strong>.</p>
+</div>
+<h1 id=3D"exercise-5-using-amazon-eks">Exercise 5: Using Amazon EKS</h1>
+<p>In this exercise, you install kubectl (the Kubernetes command line tool)=
+ and eksctl (a command line tool for Amazon EKS). You push the images back =
+to Amazon ECR. Finally, you create an Amazon EKS cluster and deploy to Kube=
+rnetes.</p>
+<h2 id=3D"task-1-installing-eksctl-and-kubectl">Task 1: Installing eksctl a=
+nd kubectl</h2>
+<p>In this task, you will install eksctl and kubectl.</p>
+<ol type=3D"1">
+<li><p>In the AWS Management Console, open AWS Cloud9.</p></li>
+<li><p>Open your IDE instance.</p></li>
+<li><p>Install <strong><a href=3D"https://docs.aws.amazon.com/eks/latest/us=
+erguide/eksctl.html" target=3D"_blank">eksctl</a></strong>:</p>
+<div class=3D"sourceCode" id=3D"cb1"><pre class=3D"sourceCode bash" id=3D"c=
+odeblock0"><code class=3D"sourceCode bash"><a class=3D"sourceLine" id=3D"cb=
+1-1" title=3D"1"><span class=3D"ex">curl</span> --silent --location <span c=
+lass=3D"st">"https://github.com/weaveworks/eksctl/releases/latest/download/=
+eksctl_</span><span class=3D"va">$(</span><span class=3D"fu">uname</span> -=
+s<span class=3D"va">)</span><span class=3D"st">_amd64.tar.gz"</span> <span =
+class=3D"kw">|</span> <span class=3D"fu">tar</span> xz -C /tmp</a>
+<a class=3D"sourceLine" id=3D"cb1-2" title=3D"2"></a>
+<a class=3D"sourceLine" id=3D"cb1-3" title=3D"3"><span class=3D"fu">sudo</s=
+pan> mv /tmp/eksctl /usr/local/bin</a></code></pre><button class=3D"btn cop=
+ybtn" data-clipboard-target=3D"#codeblock0"><img class=3D"clipboard" src=3D=
+"https://aws-tc-largeobjects.s3.us-west-2.amazonaws.com/DEV-AWS-MO-Containe=
+rsRedux/images/clipboard.svg" width=3D"13" alt=3D"Copy to clipboard"></butt=
+on></div></li>
+<li><p>Install <strong><a href=3D"https://kubernetes.io/docs/tasks/tools/in=
+stall-kubectl-linux/" target=3D"_blank">kubectl</a></strong>:</p>
+<div class=3D"sourceCode" id=3D"cb2"><pre class=3D"sourceCode bash" id=3D"c=
+odeblock1"><code class=3D"sourceCode bash"><a class=3D"sourceLine" id=3D"cb=
+2-1" title=3D"1"><span class=3D"ex">curl</span> -LO <span class=3D"st">"htt=
+ps://dl.k8s.io/release/</span><span class=3D"va">$(</span><span class=3D"ex=
+">curl</span> -L -s https://dl.k8s.io/release/stable.txt<span class=3D"va">=
+)</span><span class=3D"st">/bin/linux/amd64/kubectl"</span></a>
+<a class=3D"sourceLine" id=3D"cb2-2" title=3D"2"></a>
+<a class=3D"sourceLine" id=3D"cb2-3" title=3D"3"><span class=3D"fu">sudo</s=
+pan> install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl</a></co=
+de></pre><button class=3D"btn copybtn" data-clipboard-target=3D"#codeblock1=
+"><img class=3D"clipboard" src=3D"https://aws-tc-largeobjects.s3.us-west-2.=
+amazonaws.com/DEV-AWS-MO-ContainersRedux/images/clipboard.svg" width=3D"13"=
+ alt=3D"Copy to clipboard"></button></div>
+<p>You need to push the Docker images back to Amazon ECR because they were =
+removed in the last exercise.</p></li>
+<li><p>First, set the environment variables again.</p>
+<div class=3D"sourceCode" id=3D"cb3"><pre class=3D"sourceCode bash" id=3D"c=
+odeblock2"><code class=3D"sourceCode bash"><a class=3D"sourceLine" id=3D"cb=
+3-1" title=3D"1"><span class=3D"bu">export</span> <span class=3D"va">ACCOUN=
+T_ID=3D$(</span><span class=3D"ex">aws</span> sts get-caller-identity --out=
+put text --query Account<span class=3D"va">)</span></a>
+<a class=3D"sourceLine" id=3D"cb3-2" title=3D"2"></a>
+<a class=3D"sourceLine" id=3D"cb3-3" title=3D"3"><span class=3D"bu">export<=
+/span> <span class=3D"va">REGION=3D</span><span class=3D"st">"</span><span =
+class=3D"kw">`</span><span class=3D"fu">wget</span> -q -O - http://169.254.=
+169.254/latest/meta-data/placement/region<span class=3D"kw">`</span><span c=
+lass=3D"st">"</span></a>
+<a class=3D"sourceLine" id=3D"cb3-4" title=3D"4"></a>
+<a class=3D"sourceLine" id=3D"cb3-5" title=3D"5"><span class=3D"ex">aws</sp=
+an> ecr get-login-password <span class=3D"kw">|</span> <span class=3D"ex">d=
+ocker</span> login --username AWS --password-stdin <span class=3D"va">${ACC=
+OUNT_ID}</span>.dkr.ecr.<span class=3D"va">${REGION}</span>.amazonaws.com</=
+a></code></pre><button class=3D"btn copybtn" data-clipboard-target=3D"#code=
+block2"><img class=3D"clipboard" src=3D"https://aws-tc-largeobjects.s3.us-w=
+est-2.amazonaws.com/DEV-AWS-MO-ContainersRedux/images/clipboard.svg" width=
+=3D"13" alt=3D"Copy to clipboard"></button></div></li>
+<li><p>Create the Amazon ECR repositories.</p>
+<div class=3D"sourceCode" id=3D"cb4"><pre class=3D"sourceCode bash" id=3D"c=
+odeblock3"><code class=3D"sourceCode bash"><a class=3D"sourceLine" id=3D"cb=
+4-1" title=3D"1"><span class=3D"ex">aws</span> ecr create-repository --repo=
+sitory-name <span class=3D"st">"corpdirectory/service"</span></a>
+<a class=3D"sourceLine" id=3D"cb4-2" title=3D"2"><span class=3D"ex">aws</sp=
+an> ecr create-repository --repository-name <span class=3D"st">"corpdirecto=
+ry/frontend"</span></a></code></pre><button class=3D"btn copybtn" data-clip=
+board-target=3D"#codeblock3"><img class=3D"clipboard" src=3D"https://aws-tc=
+-largeobjects.s3.us-west-2.amazonaws.com/DEV-AWS-MO-ContainersRedux/images/=
+clipboard.svg" width=3D"13" alt=3D"Copy to clipboard"></button></div></li>
+<li><p>Push the images to the repositories.</p>
+<div class=3D"sourceCode" id=3D"cb5"><pre class=3D"sourceCode bash" id=3D"c=
+odeblock4"><code class=3D"sourceCode bash"><a class=3D"sourceLine" id=3D"cb=
+5-1" title=3D"1"><span class=3D"ex">docker</span> push <span class=3D"va">$=
+{ACCOUNT_ID}</span>.dkr.ecr.<span class=3D"va">${REGION}</span>.amazonaws.c=
+om/corpdirectory/service:latest</a>
+<a class=3D"sourceLine" id=3D"cb5-2" title=3D"2"><span class=3D"ex">docker<=
+/span> push <span class=3D"va">${ACCOUNT_ID}</span>.dkr.ecr.<span class=3D"=
+va">${REGION}</span>.amazonaws.com/corpdirectory/frontend:latest</a></code>=
+</pre><button class=3D"btn copybtn" data-clipboard-target=3D"#codeblock4"><=
+img class=3D"clipboard" src=3D"https://aws-tc-largeobjects.s3.us-west-2.ama=
+zonaws.com/DEV-AWS-MO-ContainersRedux/images/clipboard.svg" width=3D"13" al=
+t=3D"Copy to clipboard"></button></div></li>
+</ol>
+<h2 id=3D"task-2-creating-an-iam-policy-for-dynamodb">Task 2: Creating an I=
+AM policy for DynamoDB</h2>
+<p>In this task, you will create the IAM policy that=E2=80=99s needed to ac=
+cess the Amazon DynamoDB table.</p>
+<ol type=3D"1">
+<li><p>Create the IAM policy.</p>
+<div class=3D"sourceCode" id=3D"cb6"><pre class=3D"sourceCode bash" id=3D"c=
+odeblock5"><code class=3D"sourceCode bash"><a class=3D"sourceLine" id=3D"cb=
+6-1" title=3D"1"><span class=3D"ex">aws</span> iam create-policy \</a>
+<a class=3D"sourceLine" id=3D"cb6-2" title=3D"2">--policy-name eks-director=
+y-service \</a>
+<a class=3D"sourceLine" id=3D"cb6-3" title=3D"3">--policy-document <span cl=
+ass=3D"st">"{</span></a>
+<a class=3D"sourceLine" id=3D"cb6-4" title=3D"4"><span class=3D"dt">\"</spa=
+n><span class=3D"st">Version</span><span class=3D"dt">\"</span><span class=
+=3D"st">: </span><span class=3D"dt">\"</span><span class=3D"st">2012-10-17<=
+/span><span class=3D"dt">\"</span><span class=3D"st">,</span></a>
+<a class=3D"sourceLine" id=3D"cb6-5" title=3D"5"><span class=3D"dt">\"</spa=
+n><span class=3D"st">Statement</span><span class=3D"dt">\"</span><span clas=
+s=3D"st">: [ { </span><span class=3D"dt">\"</span><span class=3D"st">Effect=
+</span><span class=3D"dt">\"</span><span class=3D"st">: </span><span class=
+=3D"dt">\"</span><span class=3D"st">Allow</span><span class=3D"dt">\"</span=
+><span class=3D"st">, </span><span class=3D"dt">\"</span><span class=3D"st"=
+>Action</span><span class=3D"dt">\"</span><span class=3D"st">: [ </span><sp=
+an class=3D"dt">\"</span><span class=3D"st">dynamodb:GetItem</span><span cl=
+ass=3D"dt">\"</span><span class=3D"st">, </span><span class=3D"dt">\"</span=
+><span class=3D"st">dynamodb:Query</span><span class=3D"dt">\"</span><span =
+class=3D"st">, </span><span class=3D"dt">\"</span><span class=3D"st">dynamo=
+db:Scan</span><span class=3D"dt">\"</span><span class=3D"st">, </span><span=
+ class=3D"dt">\"</span><span class=3D"st">dynamodb:DeleteItem</span><span c=
+lass=3D"dt">\"</span><span class=3D"st">, </span><span class=3D"dt">\"</spa=
+n><span class=3D"st">dynamodb:UpdateItem</span><span class=3D"dt">\"</span>=
+<span class=3D"st">, </span><span class=3D"dt">\"</span><span class=3D"st">=
+dynamodb:PutItem</span><span class=3D"dt">\"</span><span class=3D"st"> ],</=
+span></a>
+<a class=3D"sourceLine" id=3D"cb6-6" title=3D"6"><span class=3D"dt">\"</spa=
+n><span class=3D"st">Resource</span><span class=3D"dt">\"</span><span class=
+=3D"st">: [ </span><span class=3D"dt">\"</span><span class=3D"st">arn:aws:d=
+ynamodb:</span><span class=3D"va">${REGION}</span><span class=3D"st">:</spa=
+n><span class=3D"va">${ACCOUNT_ID}</span><span class=3D"st">:table/Employee=
+s</span><span class=3D"dt">\"</span><span class=3D"st">] } ]</span></a>
+<a class=3D"sourceLine" id=3D"cb6-7" title=3D"7"><span class=3D"st">}"</spa=
+n></a></code></pre><button class=3D"btn copybtn" data-clipboard-target=3D"#=
+codeblock5"><img class=3D"clipboard" src=3D"https://aws-tc-largeobjects.s3.=
+us-west-2.amazonaws.com/DEV-AWS-MO-ContainersRedux/images/clipboard.svg" wi=
+dth=3D"13" alt=3D"Copy to clipboard"></button></div></li>
+<li><p>Copy the policy=E2=80=99s Amazon Resource Name (ARN).</p>
+<p>The policy ARN will look similar to this example:</p>
+<div class=3D"sourceCode" id=3D"cb7"><pre class=3D"sourceCode bash" id=3D"c=
+odeblock6"><code class=3D"sourceCode bash"><a class=3D"sourceLine" id=3D"cb=
+7-1" title=3D"1"><span class=3D"ex">arn</span>:aws:iam::012345678912:policy=
+/eks-directory-service</a></code></pre><button class=3D"btn copybtn" data-c=
+lipboard-target=3D"#codeblock6"><img class=3D"clipboard" src=3D"https://aws=
+-tc-largeobjects.s3.us-west-2.amazonaws.com/DEV-AWS-MO-ContainersRedux/imag=
+es/clipboard.svg" width=3D"13" alt=3D"Copy to clipboard"></button></div></l=
+i>
+<li><p>From the IDE navigation pane, open the <code>corp-eks-cluster.yaml</=
+code> file.</p></li>
+<li><p>Replace the <code>attachPolicyARNs</code> Fill Me In (FMI) with the =
+policy ARN you copied, and replace the FMI for <code>metadata.region</code>=
+ with your Region.</p>
+<p>You can find your Region by running the following command:</p>
+<div class=3D"sourceCode" id=3D"cb8"><pre class=3D"sourceCode bash" id=3D"c=
+odeblock7"><code class=3D"sourceCode bash"><a class=3D"sourceLine" id=3D"cb=
+8-1" title=3D"1"><span class=3D"ex">aws</span> ec2 describe-availability-zo=
+nes --output text --query <span class=3D"st">'AvailabilityZones[0].[RegionN=
+ame]'</span></a></code></pre><button class=3D"btn copybtn" data-clipboard-t=
+arget=3D"#codeblock7"><img class=3D"clipboard" src=3D"https://aws-tc-largeo=
+bjects.s3.us-west-2.amazonaws.com/DEV-AWS-MO-ContainersRedux/images/clipboa=
+rd.svg" width=3D"13" alt=3D"Copy to clipboard"></button></div>
+<p>The following shows an example of an updated <code>corp-eks-cluster.yaml=
+</code> file:</p>
+<div class=3D"sourceCode" id=3D"cb9"><pre class=3D"sourceCode bash" id=3D"c=
+odeblock8"><code class=3D"sourceCode bash"><a class=3D"sourceLine" id=3D"cb=
+9-1" title=3D"1"><span class=3D"ex">metadata</span>:</a>
+<a class=3D"sourceLine" id=3D"cb9-2" title=3D"2">  <span class=3D"ex">name<=
+/span>: corp-eks-cluster</a>
+<a class=3D"sourceLine" id=3D"cb9-3" title=3D"3">  <span class=3D"ex">regio=
+n</span>: us-east-1</a>
+<a class=3D"sourceLine" id=3D"cb9-4" title=3D"4"></a>
+<a class=3D"sourceLine" id=3D"cb9-5" title=3D"5"><span class=3D"ex">iam</sp=
+an>:</a>
+<a class=3D"sourceLine" id=3D"cb9-6" title=3D"6">  <span class=3D"ex">withO=
+IDC</span>: true</a>
+<a class=3D"sourceLine" id=3D"cb9-7" title=3D"7">  <span class=3D"ex">servi=
+ceAccounts</span>:</a>
+<a class=3D"sourceLine" id=3D"cb9-8" title=3D"8">  <span class=3D"ex">-</sp=
+an> metadata:</a>
+<a class=3D"sourceLine" id=3D"cb9-9" title=3D"9">      <span class=3D"ex">n=
+ame</span>: dynamodb-read-only</a>
+<a class=3D"sourceLine" id=3D"cb9-10" title=3D"10">  <span class=3D"ex">att=
+achPolicyARNs</span>:</a>
+<a class=3D"sourceLine" id=3D"cb9-11" title=3D"11">  <span class=3D"ex">-</=
+span> <span class=3D"st">"arn:aws:iam::012345678912:policy/eks-directory-se=
+rvice"</span></a></code></pre><button class=3D"btn copybtn" data-clipboard-=
+target=3D"#codeblock8"><img class=3D"clipboard" src=3D"https://aws-tc-large=
+objects.s3.us-west-2.amazonaws.com/DEV-AWS-MO-ContainersRedux/images/clipbo=
+ard.svg" width=3D"13" alt=3D"Copy to clipboard"></button></div></li>
+<li><p>Save the file.</p>
+<p>Next, you will update the <code>deployment.yaml</code> file for the dire=
+ctory service.</p></li>
+<li><p>From the navigation pane, open the <code>directory-service/kubernete=
+s/deployment.yaml</code> file.</p></li>
+<li><p>Replace the FMI for <code>spec.spec.containers.image</code> with the=
+ container image for the directory service.</p>
+<p>You can find the information for this container image by running the fol=
+lowing command:</p>
+<div class=3D"sourceCode" id=3D"cb10"><pre class=3D"sourceCode bash" id=3D"=
+codeblock9"><code class=3D"sourceCode bash"><a class=3D"sourceLine" id=3D"c=
+b10-1" title=3D"1"><span class=3D"ex">docker</span> images --format <span c=
+lass=3D"st">"{{.Repository}}:{{.Tag}}"</span> <span class=3D"kw">|</span> <=
+span class=3D"fu">grep</span> corpdirectory/service</a></code></pre><button=
+ class=3D"btn copybtn" data-clipboard-target=3D"#codeblock9"><img class=3D"=
+clipboard" src=3D"https://aws-tc-largeobjects.s3.us-west-2.amazonaws.com/DE=
+V-AWS-MO-ContainersRedux/images/clipboard.svg" width=3D"13" alt=3D"Copy to =
+clipboard"></button></div></li>
+</ol>
+<p>The following shows an example of what the <code>directory-service/kuber=
+netes/deployment.yaml</code> file should look like after you fill in the im=
+age information:</p>
+<div class=3D"sourceCode" id=3D"cb11"><pre class=3D"sourceCode bash" id=3D"=
+codeblock10"><code class=3D"sourceCode bash"><a class=3D"sourceLine" id=3D"=
+cb11-1" title=3D"1">    <span class=3D"ex">spec</span>:</a>
+<a class=3D"sourceLine" id=3D"cb11-2" title=3D"2">      <span class=3D"ex">=
+serviceAccountName</span>: dynamodb-read-only</a>
+<a class=3D"sourceLine" id=3D"cb11-3" title=3D"3">      <span class=3D"ex">=
+containers</span>:</a>
+<a class=3D"sourceLine" id=3D"cb11-4" title=3D"4">      <span class=3D"ex">=
+-</span> image: 012345678912.dkr.ecr.us-east-1.amazonaws.com/corpdirectory/=
+service:latest</a>
+<a class=3D"sourceLine" id=3D"cb11-5" title=3D"5">        <span class=3D"ex=
+">imagePullPolicy</span>: Always</a>
+<a class=3D"sourceLine" id=3D"cb11-6" title=3D"6">        <span class=3D"ex=
+">name</span>: directory-service</a>
+<a class=3D"sourceLine" id=3D"cb11-7" title=3D"7">        <span class=3D"ex=
+">ports</span>:</a>
+<a class=3D"sourceLine" id=3D"cb11-8" title=3D"8">        <span class=3D"ex=
+">-</span> containerPort: 80</a>
+<a class=3D"sourceLine" id=3D"cb11-9" title=3D"9">          <span class=3D"=
+ex">protocol</span>: TCP</a></code></pre><button class=3D"btn copybtn" data=
+-clipboard-target=3D"#codeblock10"><img class=3D"clipboard" src=3D"https://=
+aws-tc-largeobjects.s3.us-west-2.amazonaws.com/DEV-AWS-MO-ContainersRedux/i=
+mages/clipboard.svg" width=3D"13" alt=3D"Copy to clipboard"></button></div>
+<ol type=3D"1">
+<li><p>Save the file.</p>
+<p>Next, you will update the <code>deployment.yaml</code> file for the fron=
+tend.</p></li>
+<li><p>From the navigation pane, open the <code>directory-frontend/kubernet=
+es/deployment.yaml</code> file and replace the FMI for <code>spec.spec.cont=
+ainers.image</code> with the container image for the frontend.</p>
+<p>You can find the information for this container by running the following=
+ command:</p>
+<div class=3D"sourceCode" id=3D"cb12"><pre class=3D"sourceCode bash" id=3D"=
+codeblock11"><code class=3D"sourceCode bash"><a class=3D"sourceLine" id=3D"=
+cb12-1" title=3D"1"><span class=3D"ex">docker</span> images --format <span =
+class=3D"st">"{{.Repository}}:{{.Tag}}"</span> <span class=3D"kw">|</span> =
+<span class=3D"fu">grep</span> corpdirectory/frontend</a></code></pre><butt=
+on class=3D"btn copybtn" data-clipboard-target=3D"#codeblock11"><img class=
+=3D"clipboard" src=3D"https://aws-tc-largeobjects.s3.us-west-2.amazonaws.co=
+m/DEV-AWS-MO-ContainersRedux/images/clipboard.svg" width=3D"13" alt=3D"Copy=
+ to clipboard"></button></div>
+<p>The following shows an example of what the <code>directory-frontend/kube=
+rnetes/deployment.yaml</code> file should look like after you fill in the i=
+mage information:</p>
+<div class=3D"sourceCode" id=3D"cb13"><pre class=3D"sourceCode bash" id=3D"=
+codeblock12"><code class=3D"sourceCode bash"><a class=3D"sourceLine" id=3D"=
+cb13-1" title=3D"1">    <span class=3D"ex">spec</span>:</a>
+<a class=3D"sourceLine" id=3D"cb13-2" title=3D"2">      <span class=3D"ex">=
+containers</span>:</a>
+<a class=3D"sourceLine" id=3D"cb13-3" title=3D"3">      <span class=3D"ex">=
+-</span> image: 012345678912.dkr.ecr.us-east-1.amazonaws.com/corpdirectory/=
+frontend:latest</a>
+<a class=3D"sourceLine" id=3D"cb13-4" title=3D"4">        <span class=3D"ex=
+">imagePullPolicy</span>: Always</a>
+<a class=3D"sourceLine" id=3D"cb13-5" title=3D"5">        <span class=3D"ex=
+">name</span>: directory-frontend</a>
+<a class=3D"sourceLine" id=3D"cb13-6" title=3D"6">        <span class=3D"ex=
+">ports</span>:</a>
+<a class=3D"sourceLine" id=3D"cb13-7" title=3D"7">        <span class=3D"ex=
+">-</span> containerPort: 80</a>
+<a class=3D"sourceLine" id=3D"cb13-8" title=3D"8">          <span class=3D"=
+ex">protocol</span>: TCP</a></code></pre><button class=3D"btn copybtn" data=
+-clipboard-target=3D"#codeblock12"><img class=3D"clipboard" src=3D"https://=
+aws-tc-largeobjects.s3.us-west-2.amazonaws.com/DEV-AWS-MO-ContainersRedux/i=
+mages/clipboard.svg" width=3D"13" alt=3D"Copy to clipboard"></button></div>=
+</li>
+<li><p>Save the file.</p></li>
+</ol>
+<h2 id=3D"task-3-creating-the-cluster">Task 3: Creating the cluster</h2>
+<p>In this task, you will create the Amazon EKS cluster by using eksctl.</p=
+>
+<ol type=3D"1">
+<li><p>Create the cluster.</p>
+<div class=3D"sourceCode" id=3D"cb14"><pre class=3D"sourceCode bash" id=3D"=
+codeblock13"><code class=3D"sourceCode bash"><a class=3D"sourceLine" id=3D"=
+cb14-1" title=3D"1"><span class=3D"ex">eksctl</span> create cluster -f corp=
+-eks-cluster.yaml</a></code></pre><button class=3D"btn copybtn" data-clipbo=
+ard-target=3D"#codeblock13"><img class=3D"clipboard" src=3D"https://aws-tc-=
+largeobjects.s3.us-west-2.amazonaws.com/DEV-AWS-MO-ContainersRedux/images/c=
+lipboard.svg" width=3D"13" alt=3D"Copy to clipboard"></button></div>
+<p><strong>NOTE</strong>: This process can take 10=E2=80=9320 minutes to co=
+mplete.</p>
+<p>The <code>config</code> file was created for you, and it sets up the aut=
+hentication.</p></li>
+<li><p>View the <code>config</code> file.</p>
+<div class=3D"sourceCode" id=3D"cb15"><pre class=3D"sourceCode bash" id=3D"=
+codeblock14"><code class=3D"sourceCode bash"><a class=3D"sourceLine" id=3D"=
+cb15-1" title=3D"1"><span class=3D"fu">cat</span> ~/.kube/config</a></code>=
+</pre><button class=3D"btn copybtn" data-clipboard-target=3D"#codeblock14">=
+<img class=3D"clipboard" src=3D"https://aws-tc-largeobjects.s3.us-west-2.am=
+azonaws.com/DEV-AWS-MO-ContainersRedux/images/clipboard.svg" width=3D"13" a=
+lt=3D"Copy to clipboard"></button></div>
+<p>You can communicate with your Amazon EKS cluster with kubectl.</p></li>
+<li><p>Retrieve all namespaces.</p>
+<div class=3D"sourceCode" id=3D"cb16"><pre class=3D"sourceCode bash" id=3D"=
+codeblock15"><code class=3D"sourceCode bash"><a class=3D"sourceLine" id=3D"=
+cb16-1" title=3D"1"><span class=3D"ex">kubectl</span> get all --all-namespa=
+ces</a></code></pre><button class=3D"btn copybtn" data-clipboard-target=3D"=
+#codeblock15"><img class=3D"clipboard" src=3D"https://aws-tc-largeobjects.s=
+3.us-west-2.amazonaws.com/DEV-AWS-MO-ContainersRedux/images/clipboard.svg" =
+width=3D"13" alt=3D"Copy to clipboard"></button></div></li>
+<li><p>Deploy your application to Kubernetes.</p>
+<div class=3D"sourceCode" id=3D"cb17"><pre class=3D"sourceCode bash" id=3D"=
+codeblock16"><code class=3D"sourceCode bash"><a class=3D"sourceLine" id=3D"=
+cb17-1" title=3D"1"><span class=3D"ex">kubectl</span> apply -f directory-se=
+rvice/kubernetes/deployment.yaml</a>
+<a class=3D"sourceLine" id=3D"cb17-2" title=3D"2"></a>
+<a class=3D"sourceLine" id=3D"cb17-3" title=3D"3"><span class=3D"ex">kubect=
+l</span> apply -f directory-service/kubernetes/service.yaml</a></code></pre=
+><button class=3D"btn copybtn" data-clipboard-target=3D"#codeblock16"><img =
+class=3D"clipboard" src=3D"https://aws-tc-largeobjects.s3.us-west-2.amazona=
+ws.com/DEV-AWS-MO-ContainersRedux/images/clipboard.svg" width=3D"13" alt=3D=
+"Copy to clipboard"></button></div></li>
+<li><p>Exec into a service pod.</p>
+<div class=3D"sourceCode" id=3D"cb18"><pre class=3D"sourceCode bash" id=3D"=
+codeblock17"><code class=3D"sourceCode bash"><a class=3D"sourceLine" id=3D"=
+cb18-1" title=3D"1"><span class=3D"ex">kubectl</span> exec -i -t service/di=
+rectory-service -- /bin/bash</a></code></pre><button class=3D"btn copybtn" =
+data-clipboard-target=3D"#codeblock17"><img class=3D"clipboard" src=3D"http=
+s://aws-tc-largeobjects.s3.us-west-2.amazonaws.com/DEV-AWS-MO-ContainersRed=
+ux/images/clipboard.svg" width=3D"13" alt=3D"Copy to clipboard"></button></=
+div></li>
+<li><p>Run some commands inside the container, then exit the container.</p>
+<div class=3D"sourceCode" id=3D"cb19"><pre class=3D"sourceCode bash" id=3D"=
+codeblock18"><code class=3D"sourceCode bash"><a class=3D"sourceLine" id=3D"=
+cb19-1" title=3D"1"><span class=3D"fu">ls</span> -l</a>
+<a class=3D"sourceLine" id=3D"cb19-2" title=3D"2"></a>
+<a class=3D"sourceLine" id=3D"cb19-3" title=3D"3"><span class=3D"fu">ps</sp=
+an> -x</a>
+<a class=3D"sourceLine" id=3D"cb19-4" title=3D"4"></a>
+<a class=3D"sourceLine" id=3D"cb19-5" title=3D"5"><span class=3D"bu">exit</=
+span></a></code></pre><button class=3D"btn copybtn" data-clipboard-target=
+=3D"#codeblock18"><img class=3D"clipboard" src=3D"https://aws-tc-largeobjec=
+ts.s3.us-west-2.amazonaws.com/DEV-AWS-MO-ContainersRedux/images/clipboard.s=
+vg" width=3D"13" alt=3D"Copy to clipboard"></button></div></li>
+<li><p>Port-forward the corpapp-service cluster IP address to your AWS Clou=
+d9 environment.</p>
+<div class=3D"sourceCode" id=3D"cb20"><pre class=3D"sourceCode bash" id=3D"=
+codeblock19"><code class=3D"sourceCode bash"><a class=3D"sourceLine" id=3D"=
+cb20-1" title=3D"1"><span class=3D"ex">kubectl</span> port-forward  service=
+/directory-service 5000:80</a></code></pre><button class=3D"btn copybtn" da=
+ta-clipboard-target=3D"#codeblock19"><img class=3D"clipboard" src=3D"https:=
+//aws-tc-largeobjects.s3.us-west-2.amazonaws.com/DEV-AWS-MO-ContainersRedux=
+/images/clipboard.svg" width=3D"13" alt=3D"Copy to clipboard"></button></di=
+v></li>
+<li><p>In your AWS Cloud9 IDE, open another terminal tab and run this comma=
+nd:</p>
+<div class=3D"sourceCode" id=3D"cb21"><pre class=3D"sourceCode bash" id=3D"=
+codeblock20"><code class=3D"sourceCode bash"><a class=3D"sourceLine" id=3D"=
+cb21-1" title=3D"1"><span class=3D"ex">curl</span> http://localhost:5000/em=
+ployee</a></code></pre><button class=3D"btn copybtn" data-clipboard-target=
+=3D"#codeblock20"><img class=3D"clipboard" src=3D"https://aws-tc-largeobjec=
+ts.s3.us-west-2.amazonaws.com/DEV-AWS-MO-ContainersRedux/images/clipboard.s=
+vg" width=3D"13" alt=3D"Copy to clipboard"></button></div></li>
+<li><p>Close the new terminal tab you opened.</p></li>
+<li><p>Break out of the port-forward by pressing Ctrl+C.</p></li>
+</ol>
+<h2 id=3D"task-4-deploying-the-frontend-service">Task 4: Deploying the fron=
+tend service</h2>
+<p>In this task, you will deploy the frontend service.</p>
+<ol type=3D"1">
+<li><p>Deploy the frontend service.</p>
+<div class=3D"sourceCode" id=3D"cb22"><pre class=3D"sourceCode bash" id=3D"=
+codeblock21"><code class=3D"sourceCode bash"><a class=3D"sourceLine" id=3D"=
+cb22-1" title=3D"1"><span class=3D"ex">kubectl</span> apply -f directory-fr=
+ontend/kubernetes/deployment.yaml</a>
+<a class=3D"sourceLine" id=3D"cb22-2" title=3D"2"></a>
+<a class=3D"sourceLine" id=3D"cb22-3" title=3D"3"><span class=3D"ex">kubect=
+l</span> apply -f directory-frontend/kubernetes/service.yaml</a></code></pr=
+e><button class=3D"btn copybtn" data-clipboard-target=3D"#codeblock21"><img=
+ class=3D"clipboard" src=3D"https://aws-tc-largeobjects.s3.us-west-2.amazon=
+aws.com/DEV-AWS-MO-ContainersRedux/images/clipboard.svg" width=3D"13" alt=
+=3D"Copy to clipboard"></button></div></li>
+<li><p>Find the endpoint for the frontend service.</p>
+<p>You can find the endpoint by running the following:</p>
+<div class=3D"sourceCode" id=3D"cb23"><pre class=3D"sourceCode bash" id=3D"=
+codeblock22"><code class=3D"sourceCode bash"><a class=3D"sourceLine" id=3D"=
+cb23-1" title=3D"1"><span class=3D"ex">kubectl</span> get service directory=
+-frontend</a></code></pre><button class=3D"btn copybtn" data-clipboard-targ=
+et=3D"#codeblock22"><img class=3D"clipboard" src=3D"https://aws-tc-largeobj=
+ects.s3.us-west-2.amazonaws.com/DEV-AWS-MO-ContainersRedux/images/clipboard=
+.svg" width=3D"13" alt=3D"Copy to clipboard"></button></div></li>
+<li><p>Open the endpoint URL in a new tab. <strong>NOTE</strong>: It can ta=
+ke some time to set up the load balancer. You might need to wait for a few =
+minutes before you can access the endpoint.</p></li>
+<li><p>Check the logs of the frontend pod.</p>
+<div class=3D"sourceCode" id=3D"cb24"><pre class=3D"sourceCode bash" id=3D"=
+codeblock23"><code class=3D"sourceCode bash"><a class=3D"sourceLine" id=3D"=
+cb24-1" title=3D"1"><span class=3D"ex">kubectl</span> logs service/director=
+y-frontend</a></code></pre><button class=3D"btn copybtn" data-clipboard-tar=
+get=3D"#codeblock23"><img class=3D"clipboard" src=3D"https://aws-tc-largeob=
+jects.s3.us-west-2.amazonaws.com/DEV-AWS-MO-ContainersRedux/images/clipboar=
+d.svg" width=3D"13" alt=3D"Copy to clipboard"></button></div></li>
+</ol>
+<h2 id=3D"challenge">Challenge</h2>
+<p>Inspect <code>directory-service/kubernetes/deployment.yaml</code> and <c=
+ode>directory-frontend/kubernetes/deployment.yaml</code>.</p>
+<p>For this challenge, increase the number of replicas that are hosting the=
+ services, and redeploy them.</p>
+<!-- SNEAKY SNEAKY -->
+<!--Change replicas from 1 to 3 in both deployment.yaml-->
+<!--Save-->
+<h2 id=3D"cleaning-up">Cleaning up</h2>
+<ol type=3D"1">
+<li><p>Delete the Kubernetes and Amazon EKS resources.</p>
+<div class=3D"sourceCode" id=3D"cb25"><pre class=3D"sourceCode bash" id=3D"=
+codeblock24"><code class=3D"sourceCode bash"><a class=3D"sourceLine" id=3D"=
+cb25-1" title=3D"1"><span class=3D"ex">kubectl</span> delete -f directory-s=
+ervice/kubernetes/deployment.yaml</a>
+<a class=3D"sourceLine" id=3D"cb25-2" title=3D"2"><span class=3D"ex">kubect=
+l</span> delete -f directory-service/kubernetes/service.yaml</a>
+<a class=3D"sourceLine" id=3D"cb25-3" title=3D"3"><span class=3D"ex">kubect=
+l</span> delete -f directory-frontend/kubernetes/deployment.yaml</a>
+<a class=3D"sourceLine" id=3D"cb25-4" title=3D"4"><span class=3D"ex">kubect=
+l</span> delete -f directory-frontend/kubernetes/service.yaml</a>
+<a class=3D"sourceLine" id=3D"cb25-5" title=3D"5"></a>
+<a class=3D"sourceLine" id=3D"cb25-6" title=3D"6"><span class=3D"ex">eksctl=
+</span> delete cluster -f corp-eks-cluster.yaml</a></code></pre><button cla=
+ss=3D"btn copybtn" data-clipboard-target=3D"#codeblock24"><img class=3D"cli=
+pboard" src=3D"https://aws-tc-largeobjects.s3.us-west-2.amazonaws.com/DEV-A=
+WS-MO-ContainersRedux/images/clipboard.svg" width=3D"13" alt=3D"Copy to cli=
+pboard"></button></div></li>
+</ol>
+
+
+<footer>
+    <p>=C2=A9 2022 Amazon Web Services, Inc. or its affiliates. All rights =
+reserved. This work may not be reproduced or redistributed, in whole or in =
+part, without prior written permission from Amazon Web Services, Inc. Comme=
+rcial copying, lending, or selling is prohibited. Corrections, feedback, or=
+ other questions? Contact us at <a href=3D"https://support.aws.amazon.com/#=
+/contacts/aws-training" target=3D"_blank">https://support.aws.amazon.com/#/=
+contacts/aws-training</a>. All trademarks are the property of their owners.=
+</p>
+</footer>
+
+</body></html>
+------MultipartBoundary--Zfl2IkBTkxKj2URRygcdYFGwBgmSMDqgsb7AJWw6mf----
+Content-Type: text/css
+Content-Transfer-Encoding: quoted-printable
+Content-Location: cid:css-217f52a1-daf8-4869-8a28-3bc605b39d47@mhtml.blink
+
+@charset "utf-8";
+
+html, body, footer { font-family: "Open Sans", "Helvetica Neue", Helvetica,=
+ Arial, sans-serif; margin: 1em; }
+
+img:not(.clipboard) { max-width: 100%; height: auto; width: auto; }
+
+button.copybtn { transition: opacity 0.3s ease-in-out 0s; opacity: 0; paddi=
+ng: 2px 6px; position: absolute; right: 4px; top: 4px; }
+
+div.sourceCode:hover .copybtn, div.sourceCode .copybtn:focus { opacity: 0.3=
+; }
+
+div.sourceCode .copybtn:hover { opacity: 1; }
+
+div.sourceCode { position: relative; }
+
+.xmodule_display.xmodule_HtmlBlock ol { padding: 0px 0px 0px 2em !important=
+; }
+
+.xmodule_display.xmodule_HtmlBlock ul { padding: 0px 0px 0px 2em !important=
+; }
+
+code { border-radius: 4px; padding: 2px 4px !important; background-color: r=
+gb(238, 238, 238) !important; }
+
+pre code { display: block; overflow-x: auto; margin: 0px 0px 10px; font-siz=
+e: 13px; line-height: 1.42857; word-break: break-all; overflow-wrap: break-=
+word; border: 1px solid rgb(204, 204, 204); border-radius: 4px; white-space=
+: pre; padding: 9.5px !important; background-color: rgb(245, 245, 245) !imp=
+ortant; }
+
+pre code span.al { color: rgb(255, 0, 0); font-weight: bold; }
+
+pre code span.an { color: rgb(96, 160, 176); font-weight: bold; font-style:=
+ italic; }
+
+pre code span.at { color: rgb(125, 144, 41); }
+
+pre code span.bn { color: rgb(64, 160, 112); }
+
+pre code span.bu { color: rgb(6, 40, 126); }
+
+pre code span.cf { color: rgb(0, 112, 32); font-weight: bold; }
+
+pre code span.ch { color: rgb(64, 112, 160); }
+
+pre code span.cn { color: rgb(136, 0, 0); }
+
+pre code span.co { color: rgb(96, 160, 176); font-style: italic; }
+
+pre code span.cv { color: rgb(96, 160, 176); font-weight: bold; font-style:=
+ italic; }
+
+pre code span.do { color: rgb(186, 33, 33); font-style: italic; }
+
+pre code span.dt { color: rgb(144, 32, 0); }
+
+pre code span.dv { color: rgb(64, 160, 112); }
+
+pre code span.er { color: rgb(255, 0, 0); font-weight: bold; }
+
+pre code span.ex { color: rgb(6, 40, 126); }
+
+pre code span.fl { color: rgb(64, 160, 112); }
+
+pre code span.fu { color: rgb(6, 40, 126); }
+
+pre code span.im { }
+
+pre code span.in { color: rgb(96, 160, 176); font-weight: bold; font-style:=
+ italic; }
+
+pre code span.kw { color: rgb(0, 112, 32); font-weight: bold; }
+
+pre code span.op { color: rgb(102, 102, 102); }
+
+pre code span.ot { color: rgb(0, 112, 32); }
+
+pre code span.pp { color: rgb(188, 122, 0); }
+
+pre code span.sc { color: rgb(64, 112, 160); }
+
+pre code span.ss { color: rgb(187, 102, 136); }
+
+pre code span.st { color: rgb(64, 112, 160); }
+
+pre code span.va { color: rgb(25, 23, 124); }
+
+pre code span.vs { color: rgb(64, 112, 160); }
+
+pre code span.wa { color: rgb(96, 160, 176); font-weight: bold; font-style:=
+ italic; }
+
+footer { padding-top: 3em; font-style: italic; font-size: 0.9em; }
+------MultipartBoundary--Zfl2IkBTkxKj2URRygcdYFGwBgmSMDqgsb7AJWw6mf----
+Content-Type: image/svg+xml
+Content-Transfer-Encoding: quoted-printable
+Content-Location: https://aws-tc-largeobjects.s3.us-west-2.amazonaws.com/DEV-AWS-MO-ContainersRedux/images/clipboard.svg
+
+<svg height=3D"1024" width=3D"896" xmlns=3D"http://www.w3.org/2000/svg">
+  <path d=3D"M128 768h256v64H128v-64z m320-384H128v64h320v-64z m128 192V448=
+L384 640l192 192V704h320V576H576z m-288-64H128v64h160v-64zM128 704h160v-64H=
+128v64z m576 64h64v128c-1 18-7 33-19 45s-27 18-45 19H64c-35 0-64-29-64-64V1=
+92c0-35 29-64 64-64h192C256 57 313 0 384 0s128 57 128 128h192c35 0 64 29 64=
+ 64v320h-64V320H64v576h640V768zM128 256h512c0-35-29-64-64-64h-64c-35 0-64-2=
+9-64-64s-29-64-64-64-64 29-64 64-29 64-64 64h-64c-35 0-64 29-64 64z" />
+</svg>=0A
+------MultipartBoundary--Zfl2IkBTkxKj2URRygcdYFGwBgmSMDqgsb7AJWw6mf------

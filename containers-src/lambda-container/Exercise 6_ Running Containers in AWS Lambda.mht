@@ -1,0 +1,352 @@
+From: <Saved by Blink>
+Snapshot-Content-Location: https://aws-tc-largeobjects.s3.us-west-2.amazonaws.com/DEV-AWS-MO-ContainersRedux/exercise-6-lambdacontainers.html
+Subject: Exercise 6: Running Containers in AWS Lambda
+Date: Mon, 19 Sep 2022 06:53:42 -0000
+MIME-Version: 1.0
+Content-Type: multipart/related;
+	type="text/html";
+	boundary="----MultipartBoundary--AUB1LPwHDBdafIPJAUpCka5qdkgMTodbTyrBb8LdMY----"
+
+
+------MultipartBoundary--AUB1LPwHDBdafIPJAUpCka5qdkgMTodbTyrBb8LdMY----
+Content-Type: text/html
+Content-ID: <frame-F4C80870BE24A4227B4440F96C378916@mhtml.blink>
+Content-Transfer-Encoding: quoted-printable
+Content-Location: https://aws-tc-largeobjects.s3.us-west-2.amazonaws.com/DEV-AWS-MO-ContainersRedux/exercise-6-lambdacontainers.html
+
+<!DOCTYPE html><html xmlns=3D"http://www.w3.org/1999/xhtml" lang=3D"" xml:l=
+ang=3D"" data-lt-installed=3D"true"><head><meta http-equiv=3D"Content-Type"=
+ content=3D"text/html; charset=3DUTF-8"><link rel=3D"stylesheet" type=3D"te=
+xt/css" href=3D"cid:css-0b94d219-8221-4798-82c9-22337b70995a@mhtml.blink" /=
+>
+ =20
+  <meta name=3D"generator" content=3D"pandoc">
+  <meta name=3D"viewport" content=3D"width=3Ddevice-width, initial-scale=3D=
+1.0, user-scalable=3Dyes">
+  <title>Exercise 6: Running Containers in AWS Lambda</title>
+ =20
+ =20
+
+
+</head><body>
+<p><em>[version_1.0]</em></p>
+<div style=3D"background-color: #FFD2D2; padding: 15px; margin-bottom: 25px=
+">
+<h3>
+<span class=3D"fa fa-info-circle"></span> Note
+</h3>
+<p>The exercises in this course will have an associated charge in your AWS =
+account. In this exercise, you create or use the following resources:</p>
+<ul>
+<li>AWS Identity and Access Management (IAM) policy and user (Policies and =
+users are AWS account features, offered at no additional charge)</li>
+<li>AWS Cloud9 integrated development environment (IDE) instance</li>
+<li>AWS Lambda function</li>
+<li>Amazon Elastic Container Registry (Amazon ECR) repository</li>
+</ul>
+<p><strong>This exercise includes instructions to delete all the resources =
+that you created for this exercise.</strong></p>
+<p>Familiarize yourself with <strong><a href=3D"https://aws.amazon.com/clou=
+d9/pricing/" target=3D"_blank">AWS Cloud9 pricing</a></strong>, <strong><a =
+href=3D"https://aws.amazon.com/lambda/pricing/" target=3D"_blank">AWS Lambd=
+a pricing</a></strong>, <strong><a href=3D"https://aws.amazon.com/ecr/prici=
+ng/" target=3D"_blank">Amazon Elastic Container Registry pricing</a></stron=
+g>, and the <strong><a href=3D"https://aws.amazon.com/free/" target=3D"_bla=
+nk">AWS Free Tier</a></strong>.</p>
+</div>
+<h1 id=3D"exercise-6-running-containers-in-aws-lambda">Exercise 6: Running =
+Containers in AWS Lambda</h1>
+<p>In this exercise, you build a container and run it in a Lambda function.=
+</p>
+<h2 id=3D"task-1-building-the-container">Task 1: Building the container</h2=
+>
+<p>In this task, you will build the container.</p>
+<ol type=3D"1">
+<li><p>In the AWS Management Console, open AWS Cloud9.</p></li>
+<li><p>Open your IDE instance.</p></li>
+<li><p>In the IDE terminal, build the container.</p>
+<div class=3D"sourceCode" id=3D"cb1"><pre class=3D"sourceCode bash" id=3D"c=
+odeblock0"><code class=3D"sourceCode bash"><a class=3D"sourceLine" id=3D"cb=
+1-1" title=3D"1"><span class=3D"bu">cd</span> ~/environment/lambda-containe=
+r/</a>
+<a class=3D"sourceLine" id=3D"cb1-2" title=3D"2"></a>
+<a class=3D"sourceLine" id=3D"cb1-3" title=3D"3"><span class=3D"ex">docker<=
+/span> build -t ssltester-lambda .</a></code></pre><button class=3D"btn cop=
+ybtn" data-clipboard-target=3D"#codeblock0"><img class=3D"clipboard" src=3D=
+"https://aws-tc-largeobjects.s3.us-west-2.amazonaws.com/DEV-AWS-MO-Containe=
+rsRedux/images/clipboard.svg" width=3D"13" alt=3D"Copy to clipboard"></butt=
+on></div></li>
+<li><p>Log in to Amazon ECR.</p>
+<div class=3D"sourceCode" id=3D"cb2"><pre class=3D"sourceCode bash" id=3D"c=
+odeblock1"><code class=3D"sourceCode bash"><a class=3D"sourceLine" id=3D"cb=
+2-1" title=3D"1"><span class=3D"bu">export</span> <span class=3D"va">ACCOUN=
+T_ID=3D$(</span><span class=3D"ex">aws</span> sts get-caller-identity --out=
+put text --query Account<span class=3D"va">)</span></a>
+<a class=3D"sourceLine" id=3D"cb2-2" title=3D"2"></a>
+<a class=3D"sourceLine" id=3D"cb2-3" title=3D"3"><span class=3D"bu">export<=
+/span> <span class=3D"va">REGION=3D</span><span class=3D"st">"</span><span =
+class=3D"kw">`</span><span class=3D"fu">wget</span> -q -O - http://169.254.=
+169.254/latest/meta-data/placement/region<span class=3D"kw">`</span><span c=
+lass=3D"st">"</span></a>
+<a class=3D"sourceLine" id=3D"cb2-4" title=3D"4"></a>
+<a class=3D"sourceLine" id=3D"cb2-5" title=3D"5"><span class=3D"ex">aws</sp=
+an> ecr get-login-password <span class=3D"kw">|</span> <span class=3D"ex">d=
+ocker</span> login --username AWS --password-stdin <span class=3D"va">${ACC=
+OUNT_ID}</span>.dkr.ecr.<span class=3D"va">${REGION}</span>.amazonaws.com</=
+a></code></pre><button class=3D"btn copybtn" data-clipboard-target=3D"#code=
+block1"><img class=3D"clipboard" src=3D"https://aws-tc-largeobjects.s3.us-w=
+est-2.amazonaws.com/DEV-AWS-MO-ContainersRedux/images/clipboard.svg" width=
+=3D"13" alt=3D"Copy to clipboard"></button></div></li>
+<li><p>Create an Amazon ECR repository and push the image.</p>
+<div class=3D"sourceCode" id=3D"cb3"><pre class=3D"sourceCode bash" id=3D"c=
+odeblock2"><code class=3D"sourceCode bash"><a class=3D"sourceLine" id=3D"cb=
+3-1" title=3D"1"><span class=3D"ex">aws</span> ecr create-repository --repo=
+sitory-name <span class=3D"st">"ssltester-lambda"</span></a>
+<a class=3D"sourceLine" id=3D"cb3-2" title=3D"2"></a>
+<a class=3D"sourceLine" id=3D"cb3-3" title=3D"3"><span class=3D"ex">docker<=
+/span> tag ssltester-lambda <span class=3D"va">${ACCOUNT_ID}</span>.dkr.ecr=
+.<span class=3D"va">${REGION}</span>.amazonaws.com/ssltester-lambda:latest<=
+/a>
+<a class=3D"sourceLine" id=3D"cb3-4" title=3D"4"></a>
+<a class=3D"sourceLine" id=3D"cb3-5" title=3D"5"><span class=3D"ex">docker<=
+/span> push <span class=3D"va">${ACCOUNT_ID}</span>.dkr.ecr.<span class=3D"=
+va">${REGION}</span>.amazonaws.com/ssltester-lambda:latest</a></code></pre>=
+<button class=3D"btn copybtn" data-clipboard-target=3D"#codeblock2"><img cl=
+ass=3D"clipboard" src=3D"https://aws-tc-largeobjects.s3.us-west-2.amazonaws=
+.com/DEV-AWS-MO-ContainersRedux/images/clipboard.svg" width=3D"13" alt=3D"C=
+opy to clipboard"></button></div></li>
+</ol>
+<h2 id=3D"task-2-running-the-container">Task 2: Running the container</h2>
+<p>In this task, you will launch the container that you created in the prev=
+ious task.</p>
+<ol type=3D"1">
+<li><p>Launch the container.</p>
+<div class=3D"sourceCode" id=3D"cb4"><pre class=3D"sourceCode bash" id=3D"c=
+odeblock3"><code class=3D"sourceCode bash"><a class=3D"sourceLine" id=3D"cb=
+4-1" title=3D"1"><span class=3D"ex">docker</span> run  --rm -p 9000:8080 ss=
+ltester-lambda</a></code></pre><button class=3D"btn copybtn" data-clipboard=
+-target=3D"#codeblock3"><img class=3D"clipboard" src=3D"https://aws-tc-larg=
+eobjects.s3.us-west-2.amazonaws.com/DEV-AWS-MO-ContainersRedux/images/clipb=
+oard.svg" width=3D"13" alt=3D"Copy to clipboard"></button></div></li>
+<li><p>Open a new AWS Cloud9 terminal and run the following:</p>
+<div class=3D"sourceCode" id=3D"cb5"><pre class=3D"sourceCode bash" id=3D"c=
+odeblock4"><code class=3D"sourceCode bash"><a class=3D"sourceLine" id=3D"cb=
+5-1" title=3D"1"><span class=3D"ex">curl</span> -XPOST <span class=3D"st">"=
+http://localhost:9000/2015-03-31/functions/function/invocations"</span> -d =
+<span class=3D"st">'["console.aws.amazon.com","aws.amazon.com","docs.aws.am=
+azon.com","www.amazon.com"]'</span></a></code></pre><button class=3D"btn co=
+pybtn" data-clipboard-target=3D"#codeblock4"><img class=3D"clipboard" src=
+=3D"https://aws-tc-largeobjects.s3.us-west-2.amazonaws.com/DEV-AWS-MO-Conta=
+inersRedux/images/clipboard.svg" width=3D"13" alt=3D"Copy to clipboard"></b=
+utton></div></li>
+</ol>
+<h2 id=3D"task-3-creating-and-testing-the-function-in-lambda">Task 3: Creat=
+ing and testing the function in Lambda</h2>
+<p>In this task, you will create the function inside Lambda.</p>
+<ol type=3D"1">
+<li><p>At the top left, choose the <strong>AWS Cloud9</strong> icon and cho=
+ose <strong>Go To Your Dashboard</strong>.</p></li>
+<li><p>Search for and open <strong>Lambda</strong>.</p></li>
+<li><p>Choose <strong>Create function</strong>.</p></li>
+<li><p>Choose <strong>Container image</strong>.</p></li>
+<li><p>For <strong>Function name</strong>, enter <code>ssl-tester</code>.</=
+p></li>
+<li><p>Under <strong>Container image URI</strong>, choose <strong>Browse im=
+ages</strong>.</p></li>
+<li><p>In the <strong>Select container image</strong> window, choose the <s=
+trong>Select repository</strong> dropdown menu and then choose the <strong>=
+ssltester-lambda</strong> repository.</p></li>
+<li><p>Choose the <strong>latest</strong> tag and choose <strong>Select ima=
+ge</strong>.</p></li>
+<li><p>Choose <strong>Create function</strong>.</p></li>
+<li><p>In the main function pane, choose the <strong>Test</strong> tab.</p>=
+</li>
+<li><p>For <strong>Event name</strong>, enter <code>domains</code>.</p></li=
+>
+<li><p>In the <strong>Event JSON</strong> box, paste the following:</p>
+<div class=3D"sourceCode" id=3D"cb6"><pre class=3D"sourceCode json" id=3D"c=
+odeblock5"><code class=3D"sourceCode json"><a class=3D"sourceLine" id=3D"cb=
+6-1" title=3D"1"><span class=3D"ot">[</span><span class=3D"st">"console.aws=
+.amazon.com"</span><span class=3D"ot">,</span><span class=3D"st">"aws.amazo=
+n.com"</span><span class=3D"ot">,</span><span class=3D"st">"docs.aws.amazon=
+.com"</span><span class=3D"ot">,</span><span class=3D"st">"www.amazon.com"<=
+/span><span class=3D"ot">]</span></a></code></pre><button class=3D"btn copy=
+btn" data-clipboard-target=3D"#codeblock5"><img class=3D"clipboard" src=3D"=
+https://aws-tc-largeobjects.s3.us-west-2.amazonaws.com/DEV-AWS-MO-Container=
+sRedux/images/clipboard.svg" width=3D"13" alt=3D"Copy to clipboard"></butto=
+n></div></li>
+<li><p>Choose <strong>Save</strong> and then choose <strong>Test</strong>.<=
+/p></li>
+<li><p>In the <strong>Execution result: succeeded (logs)</strong> box, expa=
+nd <strong>Details</strong>.</p>
+<p>You should now see the test results, which should be similar to the resu=
+lts from the previous test you ran in AWS Cloud9.</p></li>
+</ol>
+<h2 id=3D"cleaning-up">Cleaning up</h2>
+<p>In this task, you will log in to your AWS account as an administrator an=
+d delete the AWS resources that you created for this project.</p>
+<ol type=3D"1">
+<li><p>If needed, log in to the console as an administrator.</p></li>
+<li>Delete the <code>ssl-tester</code> Lambda function.
+<ul>
+<li>Open the Lambda dashboard.</li>
+<li>In the navigation pane, choose <strong>Functions</strong>.</li>
+<li>Delete the <strong>ssl-tester</strong> function and confirm the deletio=
+n.</li>
+</ul></li>
+<li>Delete the AWS Cloud9 IDE instance.
+<ul>
+<li>Open the AWS Cloud9 dashboard.</li>
+<li>Delete the <strong>containers-cloud9</strong> environment and confirm t=
+he deletion.</li>
+</ul></li>
+<li>Delete the CloudFormation stack
+<ul>
+<li>Open the AWS CloudFormation dashboard.</li>
+<li>In the navigation pane, choose <strong>Stacks</strong>.</li>
+<li>Delete the <strong>exercise-containers</strong> stack and confirm the d=
+eletion.</li>
+</ul></li>
+<li>Delete the IAM role.
+<ul>
+<li>Open the IAM dashboard.</li>
+<li>In the navigation pane, under <strong>Access management</strong>, choos=
+e <strong>Roles</strong>.</li>
+<li>Delete <strong>ssl-tester-role-</strong> and confirm the deletion.</li>
+</ul></li>
+<li>Delete the IAM policy.
+<ul>
+<li>In the IAM navigation pane, under <strong>Access management</strong>, c=
+hoose <strong>Policies</strong>.</li>
+<li>Delete the customer managed <strong>eks-directory-service</strong> poli=
+cy and confirm the deletion.</li>
+</ul></li>
+</ol>
+
+
+<footer>
+    <p>=C2=A9 2022 Amazon Web Services, Inc. or its affiliates. All rights =
+reserved. This work may not be reproduced or redistributed, in whole or in =
+part, without prior written permission from Amazon Web Services, Inc. Comme=
+rcial copying, lending, or selling is prohibited. Corrections, feedback, or=
+ other questions? Contact us at <a href=3D"https://support.aws.amazon.com/#=
+/contacts/aws-training" target=3D"_blank">https://support.aws.amazon.com/#/=
+contacts/aws-training</a>. All trademarks are the property of their owners.=
+</p>
+</footer>
+
+</body></html>
+------MultipartBoundary--AUB1LPwHDBdafIPJAUpCka5qdkgMTodbTyrBb8LdMY----
+Content-Type: text/css
+Content-Transfer-Encoding: quoted-printable
+Content-Location: cid:css-0b94d219-8221-4798-82c9-22337b70995a@mhtml.blink
+
+@charset "utf-8";
+
+html, body, footer { font-family: "Open Sans", "Helvetica Neue", Helvetica,=
+ Arial, sans-serif; margin: 1em; }
+
+img:not(.clipboard) { max-width: 100%; height: auto; width: auto; }
+
+button.copybtn { transition: opacity 0.3s ease-in-out 0s; opacity: 0; paddi=
+ng: 2px 6px; position: absolute; right: 4px; top: 4px; }
+
+div.sourceCode:hover .copybtn, div.sourceCode .copybtn:focus { opacity: 0.3=
+; }
+
+div.sourceCode .copybtn:hover { opacity: 1; }
+
+div.sourceCode { position: relative; }
+
+.xmodule_display.xmodule_HtmlBlock ol { padding: 0px 0px 0px 2em !important=
+; }
+
+.xmodule_display.xmodule_HtmlBlock ul { padding: 0px 0px 0px 2em !important=
+; }
+
+code { border-radius: 4px; padding: 2px 4px !important; background-color: r=
+gb(238, 238, 238) !important; }
+
+pre code { display: block; overflow-x: auto; margin: 0px 0px 10px; font-siz=
+e: 13px; line-height: 1.42857; word-break: break-all; overflow-wrap: break-=
+word; border: 1px solid rgb(204, 204, 204); border-radius: 4px; white-space=
+: pre; padding: 9.5px !important; background-color: rgb(245, 245, 245) !imp=
+ortant; }
+
+pre code span.al { color: rgb(255, 0, 0); font-weight: bold; }
+
+pre code span.an { color: rgb(96, 160, 176); font-weight: bold; font-style:=
+ italic; }
+
+pre code span.at { color: rgb(125, 144, 41); }
+
+pre code span.bn { color: rgb(64, 160, 112); }
+
+pre code span.bu { color: rgb(6, 40, 126); }
+
+pre code span.cf { color: rgb(0, 112, 32); font-weight: bold; }
+
+pre code span.ch { color: rgb(64, 112, 160); }
+
+pre code span.cn { color: rgb(136, 0, 0); }
+
+pre code span.co { color: rgb(96, 160, 176); font-style: italic; }
+
+pre code span.cv { color: rgb(96, 160, 176); font-weight: bold; font-style:=
+ italic; }
+
+pre code span.do { color: rgb(186, 33, 33); font-style: italic; }
+
+pre code span.dt { color: rgb(144, 32, 0); }
+
+pre code span.dv { color: rgb(64, 160, 112); }
+
+pre code span.er { color: rgb(255, 0, 0); font-weight: bold; }
+
+pre code span.ex { color: rgb(6, 40, 126); }
+
+pre code span.fl { color: rgb(64, 160, 112); }
+
+pre code span.fu { color: rgb(6, 40, 126); }
+
+pre code span.im { }
+
+pre code span.in { color: rgb(96, 160, 176); font-weight: bold; font-style:=
+ italic; }
+
+pre code span.kw { color: rgb(0, 112, 32); font-weight: bold; }
+
+pre code span.op { color: rgb(102, 102, 102); }
+
+pre code span.ot { color: rgb(0, 112, 32); }
+
+pre code span.pp { color: rgb(188, 122, 0); }
+
+pre code span.sc { color: rgb(64, 112, 160); }
+
+pre code span.ss { color: rgb(187, 102, 136); }
+
+pre code span.st { color: rgb(64, 112, 160); }
+
+pre code span.va { color: rgb(25, 23, 124); }
+
+pre code span.vs { color: rgb(64, 112, 160); }
+
+pre code span.wa { color: rgb(96, 160, 176); font-weight: bold; font-style:=
+ italic; }
+
+footer { padding-top: 3em; font-style: italic; font-size: 0.9em; }
+------MultipartBoundary--AUB1LPwHDBdafIPJAUpCka5qdkgMTodbTyrBb8LdMY----
+Content-Type: image/svg+xml
+Content-Transfer-Encoding: quoted-printable
+Content-Location: https://aws-tc-largeobjects.s3.us-west-2.amazonaws.com/DEV-AWS-MO-ContainersRedux/images/clipboard.svg
+
+<svg height=3D"1024" width=3D"896" xmlns=3D"http://www.w3.org/2000/svg">
+  <path d=3D"M128 768h256v64H128v-64z m320-384H128v64h320v-64z m128 192V448=
+L384 640l192 192V704h320V576H576z m-288-64H128v64h160v-64zM128 704h160v-64H=
+128v64z m576 64h64v128c-1 18-7 33-19 45s-27 18-45 19H64c-35 0-64-29-64-64V1=
+92c0-35 29-64 64-64h192C256 57 313 0 384 0s128 57 128 128h192c35 0 64 29 64=
+ 64v320h-64V320H64v576h640V768zM128 256h512c0-35-29-64-64-64h-64c-35 0-64-2=
+9-64-64s-29-64-64-64-64 29-64 64-29 64-64 64h-64c-35 0-64 29-64 64z" />
+</svg>=0A
+------MultipartBoundary--AUB1LPwHDBdafIPJAUpCka5qdkgMTodbTyrBb8LdMY------

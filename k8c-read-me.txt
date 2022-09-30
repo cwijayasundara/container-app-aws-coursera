@@ -1,0 +1,24 @@
+kubectl create cluster -f corp-eks-cluster.yaml
+
+kubectl get all --all-namespaces
+
+kubectl apply -f directory-service/kurbernetes/deployment.yaml
+
+kubectl apply -f directory-service/kurbernetes/service.yaml
+
+kubectl apply -f directory-frontend/kurbernetes/deployment.yaml
+
+kubectl apply -f directory-frontend/kurbernetes/service.yaml
+
+kubectl get service directory-frontend
+
+kubectl logs service/directory-frontend
+
+Debugging Amazon EKS
+When you need to diagnose issues in your Amazon Elastic Kubernetes Service (Amazon EKS) workloads, you can use some kubectl commands.
+
+kubectl logs: View the logs of a container in a Pod.
+
+kubectl port-forward: Connect ports on your local host to ports on a container.
+
+kubectl exec: Run commands inside a container.
